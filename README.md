@@ -12,6 +12,7 @@ Sites built entirely using IntelliFront + Claude Code — no manual design work.
 
 - [KOVA](https://kova-ruddy.vercel.app) — DTC sneaker brand
 - [Seve](https://seve-zeta.vercel.app) — Luxury fragrance brand
+- [Lumen](https://lumen-two-lake.vercel.app) — Modern AI product
 
 ---
 
