@@ -2,9 +2,7 @@
 
 **Frontend intelligence system for evaluating, critiquing, and redesigning websites.**
 
-IntelliFront is a Claude skill that operates like a senior design agency. It diagnoses
-problems, detects AI-generated patterns, synthesizes research-backed design direction,
-and generates production-quality redesign code.
+IntelliFront is a multi-agent frontend intelligence system that operates like a senior design agency. It diagnoses problems, detects AI-generated patterns, researches live references from real sites in your niche, and generates production-quality redesign code — for any AI coding tool that supports SKILL.md files.
 
 ## Live Demos
 
@@ -217,5 +215,4 @@ MIT. Use it, adapt it, build on it.
 
 ---
 
-*IntelliFront is a Claude skill — it runs inside Claude, not as a standalone application.
-It requires access to Claude (claude.ai or Anthropic API).*
+*IntelliFront is a SKILL.md-compatible system — it runs inside any AI coding tool that supports skill files, including Claude Code, Cursor, v0, Lovable, Windsurf, and Gemini CLI. It requires access to one of these tools to function.*
