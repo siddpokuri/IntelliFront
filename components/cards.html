@@ -1,0 +1,460 @@
+<!--
+  IntelliFront — Card & Feature Components
+  Intentionally excludes 3-col icon-card grids.
+  Variants:
+    1. Feature strip (alternating text/visual)
+    2. Bento grid (asymmetric, Tier 3–4)
+    3. Long-form testimonial
+    4. Stat narrative
+    5. Spotlight hover card (Tier 4)
+-->
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-display: system-ui, sans-serif;
+    --font-body:    system-ui, sans-serif;
+    --color-bg:     oklch(97% 0.006 250);
+    --color-bg2:    oklch(94% 0.007 250);
+    --color-text:   oklch(15% 0.01 250);
+    --color-muted:  oklch(46% 0.01 250);
+    --color-accent: oklch(52% 0.2 250);
+    --color-border: oklch(88% 0.008 250);
+    --ease-out:     cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
+
+
+<!-- ============================================================
+     VARIANT 1 — FEATURE STRIPS (Tier 2–3)
+     Alternating text-left/visual-right and visual-left/text-right.
+     Each strip = one focused idea. Not a grid.
+     ============================================================ -->
+<style>
+  .features {
+    padding: clamp(4rem, 8vw, 8rem) clamp(1.5rem, 5vw, 3rem);
+    font-family: var(--font-body);
+  }
+  .features__header {
+    max-width: 720px;
+    margin-inline: auto;
+    text-align: center;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+  }
+  .features__header h2 {
+    font-family: var(--font-display);
+    font-size: clamp(1.75rem, 3.5vw, 2.625rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+    color: var(--color-text);
+    margin-bottom: 1rem;
+  }
+  .features__header p {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    max-width: 54ch;
+    margin-inline: auto;
+  }
+
+  .feature-strip {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(2rem, 5vw, 5rem);
+    align-items: center;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+  }
+  .feature-strip + .feature-strip {
+    border-top: 1px solid var(--color-border);
+  }
+  /* Even strips: flip order */
+  .feature-strip:nth-child(even) .feature-strip__visual {
+    order: -1;
+  }
+
+  .feature-strip__content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .feature-strip__tag {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+  .feature-strip__content h3 {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.5vw, 1.875rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-text);
+  }
+  .feature-strip__content p {
+    font-size: 1.0625rem;
+    line-height: 1.7;
+    color: var(--color-muted);
+    max-width: 44ch;
+  }
+  .feature-strip__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 1px;
+    transition: border-color 200ms, gap 200ms var(--ease-out);
+    align-self: flex-start;
+  }
+  .feature-strip__link:hover {
+    border-color: var(--color-text);
+    gap: 0.625rem;
+  }
+
+  .feature-strip__visual {
+    border-radius: 14px;
+    overflow: hidden;
+    background: var(--color-bg2);
+    aspect-ratio: 4/3;
+    position: relative;
+  }
+  .feature-strip__visual img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 500ms var(--ease-out);
+  }
+  .feature-strip__visual:hover img {
+    transform: scale(1.03);
+  }
+
+  @media (max-width: 680px) {
+    .feature-strip {
+      grid-template-columns: 1fr;
+    }
+    .feature-strip:nth-child(even) .feature-strip__visual {
+      order: 0;
+    }
+  }
+</style>
+
+<section class="features" aria-label="Features">
+  <div class="features__header">
+    <h2>Built for the work that matters</h2>
+    <p>Three things that change how your team operates — none of them require a certification course.</p>
+  </div>
+
+  <div class="feature-strip">
+    <div class="feature-strip__content">
+      <span class="feature-strip__tag">Speed</span>
+      <h3>Decisions in hours, not weeks</h3>
+      <p>Every project has a decision log. Everyone sees the context. Nothing gets relitigated in the next meeting because someone missed a thread.</p>
+      <a href="/product/decisions" class="feature-strip__link">How it works →</a>
+    </div>
+    <div class="feature-strip__visual">
+      <img src="https://picsum.photos/seed/decisions/800/600" alt="Decision log interface" loading="lazy">
+    </div>
+  </div>
+
+  <div class="feature-strip">
+    <div class="feature-strip__content">
+      <span class="feature-strip__tag">Clarity</span>
+      <h3>Context that travels with the work</h3>
+      <p>Status updates, relevant files, and the last three conversations — all in one place. No more asking "where's the brief?" for the fourth time.</p>
+      <a href="/product/context" class="feature-strip__link">See context in action →</a>
+    </div>
+    <div class="feature-strip__visual">
+      <img src="https://picsum.photos/seed/context/800/600" alt="Context panel showing project files and history" loading="lazy">
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     VARIANT 2 — ASYMMETRIC BENTO GRID (Tier 3–4)
+     Best for: SaaS feature showcases, product launches, agency work
+     4–6 cells in a non-uniform grid — varied sizes, not identical cards
+     ============================================================ -->
+<style>
+  .bento {
+    padding: clamp(3rem, 6vw, 6rem) clamp(1.5rem, 5vw, 3rem);
+    max-width: 1200px;
+    margin-inline: auto;
+    font-family: var(--font-body);
+  }
+  .bento__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto;
+    gap: 1rem;
+  }
+  .bento__cell {
+    background: var(--color-bg2);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    overflow: hidden;
+    position: relative;
+    transition: border-color 250ms, transform 250ms var(--ease-out);
+  }
+  .bento__cell:hover {
+    border-color: oklch(78% 0.012 250);
+    transform: translateY(-2px);
+  }
+
+  /* Span variants */
+  .bento__cell--wide  { grid-column: span 2; }
+  .bento__cell--tall  { grid-row: span 2; }
+  .bento__cell--full  { grid-column: span 3; }
+
+  .bento__cell-tag {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 0.75rem;
+  }
+  .bento__cell h3 {
+    font-family: var(--font-display);
+    font-size: 1.1875rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    margin-bottom: 0.625rem;
+    line-height: 1.25;
+  }
+  .bento__cell p {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-muted);
+    max-width: 38ch;
+  }
+  .bento__cell-visual {
+    margin-top: 1.25rem;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--color-border);
+  }
+  .bento__cell-visual img {
+    width: 100%; display: block;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    .bento__grid {
+      grid-template-columns: 1fr;
+    }
+    .bento__cell--wide,
+    .bento__cell--tall,
+    .bento__cell--full {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+  }
+</style>
+
+<section class="bento" aria-label="Product features">
+  <div class="bento__grid">
+    <div class="bento__cell bento__cell--wide">
+      <div class="bento__cell-tag">Core</div>
+      <h3>Real-time collaboration without the chaos</h3>
+      <p>Everyone works in the same document. Changes appear live. Conflicts resolve automatically.</p>
+      <div class="bento__cell-visual">
+        <img src="https://picsum.photos/seed/collab/800/400" alt="" loading="lazy">
+      </div>
+    </div>
+
+    <div class="bento__cell">
+      <div class="bento__cell-tag">Security</div>
+      <h3>SOC 2 Type II certified</h3>
+      <p>Your data stays yours. End-to-end encrypted at rest and in transit.</p>
+    </div>
+
+    <div class="bento__cell">
+      <div class="bento__cell-tag">Speed</div>
+      <h3>Loads in under 200ms</h3>
+      <p>Edge-deployed globally. Fast everywhere, not just in the Bay Area.</p>
+    </div>
+
+    <div class="bento__cell">
+      <div class="bento__cell-tag">Integrations</div>
+      <h3>Works with your stack</h3>
+      <p>GitHub, Slack, Jira, Notion, Linear, Figma — all connected on day one.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     VARIANT 3 — LONG-FORM TESTIMONIAL (Tier 2–3)
+     One real story > six thin quotes.
+     Best for: SaaS social proof, B2B, enterprise
+     ============================================================ -->
+<style>
+  .testimonial-featured {
+    padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 3rem);
+    background: var(--color-text);
+    font-family: var(--font-body);
+  }
+  .testimonial-featured__inner {
+    max-width: 860px;
+    margin-inline: auto;
+  }
+  .testimonial-featured blockquote {
+    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.5vw, 2rem);
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+    color: oklch(97% 0.005 250);
+    margin-bottom: 2.5rem;
+  }
+  .testimonial-featured blockquote::before {
+    content: '"';
+    display: block;
+    font-size: 4rem;
+    line-height: 1;
+    color: oklch(40% 0.01 250);
+    margin-bottom: 0.5rem;
+    font-family: Georgia, serif;
+  }
+  .testimonial-featured__author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .testimonial-featured__avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: oklch(30% 0.01 250);
+    flex-shrink: 0;
+  }
+  .testimonial-featured__avatar img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+  }
+  .testimonial-featured__name {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: oklch(97% 0.005 250);
+  }
+  .testimonial-featured__role {
+    font-size: 0.875rem;
+    color: oklch(55% 0.008 250);
+    margin-top: 0.125rem;
+  }
+</style>
+
+<section class="testimonial-featured">
+  <div class="testimonial-featured__inner">
+    <blockquote>
+      We cut our weekly planning meeting from 90 minutes to 20. Not because we started
+      using fewer words — because everyone already knew the context before walking in.
+      That's the change.
+    </blockquote>
+    <div class="testimonial-featured__author">
+      <div class="testimonial-featured__avatar">
+        <img src="https://picsum.photos/seed/person1/96/96" alt="Portrait of Rania Khalil">
+      </div>
+      <div>
+        <p class="testimonial-featured__name">Rania Khalil</p>
+        <p class="testimonial-featured__role">VP of Engineering, Meridian Labs</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     VARIANT 5 — SPOTLIGHT HOVER CARDS (Tier 4)
+     Cards that light up from the cursor position.
+     Best for: agency work, creative tools, product showcases
+     ============================================================ -->
+<style>
+  .spotlight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    overflow: hidden;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+  .spotlight-card {
+    background: var(--color-bg);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+  }
+  .spotlight-card::before {
+    content: '';
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, oklch(85% 0.04 250 / 0.5) 0%, transparent 70%);
+    left: var(--mx, -999px);
+    top:  var(--my, -999px);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 200ms;
+  }
+  .spotlight-card:hover::before {
+    opacity: 1;
+  }
+  .spotlight-card h3 {
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: 0.625rem;
+    letter-spacing: -0.02em;
+  }
+  .spotlight-card p {
+    font-size: 0.9375rem;
+    color: var(--color-muted);
+    line-height: 1.6;
+  }
+</style>
+
+<div class="spotlight-grid">
+  <div class="spotlight-card" data-spotlight>
+    <h3>Instant context</h3>
+    <p>Every project carries its full history. No onboarding required for anyone new.</p>
+  </div>
+  <div class="spotlight-card" data-spotlight>
+    <h3>Real decisions</h3>
+    <p>Not just a chat thread — a structured log of what was decided and why.</p>
+  </div>
+  <div class="spotlight-card" data-spotlight>
+    <h3>Async by default</h3>
+    <p>Designed for teams that can't always be online at the same time.</p>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-spotlight]').forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', `${e.clientX - r.left}px`);
+      card.style.setProperty('--my', `${e.clientY - r.top}px`);
+    });
+  });
+</script>

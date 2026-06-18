@@ -1,0 +1,328 @@
+<!--
+  IntelliFront — CTA Section Components
+  Variants:
+    1. Minimal inline CTA (Tier 2)
+    2. Full-width with background shift (Tier 3)
+    3. Split with testimonial pull quote (Tier 3)
+    4. Kinetic dark CTA (Tier 4–5)
+-->
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-display: system-ui, sans-serif;
+    --font-body:    system-ui, sans-serif;
+    --color-bg:     oklch(97% 0.006 250);
+    --color-bg2:    oklch(94% 0.007 250);
+    --color-text:   oklch(15% 0.01 250);
+    --color-muted:  oklch(46% 0.01 250);
+    --color-accent: oklch(52% 0.2 250);
+    --color-border: oklch(88% 0.008 250);
+    --ease-out:     cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
+
+
+<!-- ============================================================
+     VARIANT 1 — MINIMAL INLINE CTA (Tier 2)
+     Quiet, confident. No backgrounds. Just the ask.
+     Best for: SaaS, portfolio, docs site
+     ============================================================ -->
+<style>
+  .cta-minimal {
+    padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 3rem);
+    max-width: 720px;
+    margin-inline: auto;
+    font-family: var(--font-body);
+  }
+  .cta-minimal__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1.25rem;
+  }
+  .cta-minimal h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--color-text);
+    margin-bottom: 1.25rem;
+  }
+  .cta-minimal p {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: var(--color-muted);
+    max-width: 52ch;
+    margin-bottom: 2rem;
+  }
+  .cta-minimal__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: oklch(98% 0.005 250);
+    background: var(--color-text);
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), background-color 150ms;
+  }
+  .btn-primary:hover  { background: oklch(25% 0.015 250); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .cta-minimal__caveat {
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    align-self: center;
+  }
+</style>
+
+<section class="cta-minimal">
+  <p class="cta-minimal__label">Get started</p>
+  <h2>Your team is ready.<br>Are you?</h2>
+  <p>Join 2,400+ teams who moved their planning out of Slack threads and into something that actually works.</p>
+  <div class="cta-minimal__actions">
+    <a href="/signup" class="btn-primary">Start free — no card needed</a>
+    <span class="cta-minimal__caveat">14-day trial · cancel anytime</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     VARIANT 2 — FULL-WIDTH BACKGROUND CTA (Tier 3)
+     Uses a surface color shift to signal the close of the page.
+     Best for: SaaS, e-commerce, fintech
+     ============================================================ -->
+<style>
+  .cta-full {
+    background: var(--color-text);
+    padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 3rem);
+    font-family: var(--font-body);
+    text-align: center;
+  }
+  .cta-full__inner {
+    max-width: 680px;
+    margin-inline: auto;
+  }
+  .cta-full h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 4.5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: oklch(97% 0.005 250);
+    margin-bottom: 1.25rem;
+  }
+  .cta-full p {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: oklch(58% 0.008 250);
+    max-width: 50ch;
+    margin-inline: auto;
+    margin-bottom: 2.5rem;
+  }
+  .cta-full__actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.8125rem 1.625rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    background: oklch(97% 0.005 250);
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), background-color 150ms;
+  }
+  .btn-light:hover  { background: oklch(100% 0 0); }
+  .btn-light:active { transform: scale(0.97); }
+  .btn-light:focus-visible {
+    outline: 2px solid oklch(97% 0.005 250);
+    outline-offset: 3px;
+  }
+  .btn-ghost-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.8125rem 1.375rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: oklch(65% 0.008 250);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .btn-ghost-light:hover { color: oklch(90% 0.005 250); }
+  .cta-full__note {
+    margin-top: 1.5rem;
+    font-size: 0.8125rem;
+    color: oklch(42% 0.008 250);
+  }
+</style>
+
+<section class="cta-full">
+  <div class="cta-full__inner">
+    <h2>Start today.<br>See results this week.</h2>
+    <p>Free for teams up to 5. No sales call required. No implementation consultant. Just sign up.</p>
+    <div class="cta-full__actions">
+      <a href="/signup" class="btn-light">Create free account</a>
+      <a href="/demo" class="btn-ghost-light">Schedule a demo →</a>
+    </div>
+    <p class="cta-full__note">SOC 2 Type II · GDPR compliant · 99.9% uptime SLA</p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     VARIANT 4 — DARK EDITORIAL CTA (Tier 4–5)
+     Texture + restrained type. No gradient orbs, no glow.
+     Depth comes from typography and noise, not light emission.
+     Best for: agencies, AI products, creative tools, launches
+     ============================================================ -->
+<style>
+  .cta-dark {
+    position: relative;
+    padding: clamp(5rem, 10vw, 9rem) clamp(1.5rem, 5vw, 3rem);
+    background: oklch(10% 0.012 270);
+    overflow: hidden;
+    font-family: var(--font-body);
+    text-align: center;
+  }
+
+  /* SVG noise texture — replaces gradient orbs entirely */
+  .cta-dark::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.055'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.45;
+    z-index: 0;
+  }
+
+  /* Single subtle vignette — replaces orbs */
+  .cta-dark::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, oklch(18% 0.02 270 / 0.6) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cta-dark__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    margin-inline: auto;
+  }
+
+  .cta-dark__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: oklch(50% 0.01 270);
+    margin-bottom: 1.5rem;
+  }
+
+  .cta-dark h2 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.12;
+    color: oklch(95% 0.005 270);
+    margin-bottom: 1.25rem;
+  }
+
+  .cta-dark p {
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    color: oklch(58% 0.01 270);
+    max-width: 46ch;
+    margin-inline: auto;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Restrained dark CTA button — depth via shadow, not glow */
+  .btn-dark-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: oklch(10% 0.012 270);
+    background: oklch(96% 0.005 270);
+    border-radius: 8px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    /* Depth shadow — not a glow */
+    box-shadow: 0 4px 16px oklch(0% 0 0 / 0.4),
+                0 1px 3px oklch(0% 0 0 / 0.3);
+    transition: transform 120ms cubic-bezier(0.23, 1, 0.32, 1),
+                background-color 200ms,
+                box-shadow 200ms;
+  }
+  .btn-dark-cta:hover {
+    background: oklch(100% 0 0);
+    box-shadow: 0 8px 24px oklch(0% 0 0 / 0.5),
+                0 2px 4px oklch(0% 0 0 / 0.3);
+  }
+  .btn-dark-cta:active  { transform: scale(0.97); }
+  .btn-dark-cta:focus-visible {
+    outline: 2px solid oklch(96% 0.005 270);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-dark-cta { transition-duration: 0.01ms !important; }
+  }
+</style>
+
+<section class="cta-dark" aria-label="Get started">
+  <div class="cta-dark__inner">
+    <span class="cta-dark__label">Open for new work</span>
+    <h2>Ready to build something worth remembering?</h2>
+    <p>We take on 4 projects per quarter. If you're thinking about it, start the conversation now.</p>
+    <a href="/contact" class="btn-dark-cta">
+      Start a project
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M2.5 7h9M8 3.5L11.5 7 8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</section>

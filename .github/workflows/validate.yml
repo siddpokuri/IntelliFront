@@ -1,0 +1,151 @@
+name: Validate IntelliFront Skill
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  structure-check:
+    name: Repository structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check required files exist
+        run: |
+          required=(
+            "SKILL.md"
+            "README.md"
+            "agents/01-critic.md"
+            "agents/02-design-intelligence.md"
+            "agents/03-slop-detector.md"
+            "agents/04-conversion.md"
+            "agents/05-godmode.md"
+            "styles/design-system.md"
+            "styles/typography.md"
+            "styles/motion.md"
+            "components/README.md"
+            "components/nav.html"
+            "components/hero.html"
+            "components/cards.html"
+            "components/buttons.html"
+            "components/interactive.html"
+            "components/cta.html"
+            "components/footer.html"
+            "components/ui-kit.html"
+            "docs/design-references.md"
+            "docs/anti-slop-index.md"
+            "utils/scoring.md"
+            "utils/confidence.md"
+          )
+          missing=0
+          for f in "${required[@]}"; do
+            if [ ! -f "$f" ]; then
+              echo "MISSING: $f"
+              missing=$((missing + 1))
+            else
+              echo "OK: $f"
+            fi
+          done
+          if [ $missing -gt 0 ]; then
+            echo ""
+            echo "$missing required file(s) are missing."
+            exit 1
+          fi
+          echo ""
+          echo "All required files present."
+
+  markdown-lint:
+    name: Markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install markdownlint-cli
+        run: npm install -g markdownlint-cli
+
+      - name: Lint markdown files
+        run: |
+          markdownlint \
+            --config .markdownlint.json \
+            "**/*.md" \
+            --ignore node_modules \
+            --ignore examples/ \
+            || true
+          # Non-blocking: markdownlint as style guidance, not hard gate
+
+  html-check:
+    name: HTML component structure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check HTML components are non-empty
+        run: |
+          for f in components/*.html; do
+            size=$(wc -c < "$f")
+            if [ "$size" -lt 100 ]; then
+              echo "WARN: $f appears too small ($size bytes)"
+            else
+              echo "OK: $f ($size bytes)"
+            fi
+          done
+
+      - name: Check for banned CSS patterns in generated components
+        run: |
+          banned_patterns=(
+            "background-clip: text"
+            "-webkit-background-clip: text"
+            "border-left: [3-9]px solid"
+            "border-left: [1-9][0-9]px solid"
+            "ease-in\b"
+            "font-family.*Syne"
+            "font-family.*Inter.*display"
+          )
+          found=0
+          for f in components/*.html; do
+            for pattern in "${banned_patterns[@]}"; do
+              if grep -qE "$pattern" "$f" 2>/dev/null; then
+                echo "WARN: Possible banned pattern '$pattern' in $f"
+                found=$((found + 1))
+              fi
+            done
+          done
+          if [ $found -gt 0 ]; then
+            echo ""
+            echo "$found potential banned pattern(s) found — review before merging."
+          else
+            echo "No banned patterns detected in components."
+          fi
+        continue-on-error: true
+
+  skill-entry-check:
+    name: SKILL.md completeness
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check SKILL.md contains required sections
+        run: |
+          required_sections=(
+            "Activation Triggers"
+            "Step 1"
+            "Step 2"
+            "Step 3"
+            "Anti-Hallucination"
+          )
+          missing=0
+          for section in "${required_sections[@]}"; do
+            if grep -q "$section" SKILL.md; then
+              echo "OK: '$section' found in SKILL.md"
+            else
+              echo "MISSING: '$section' not found in SKILL.md"
+              missing=$((missing + 1))
+            fi
+          done
+          if [ $missing -gt 0 ]; then
+            echo "$missing section(s) missing from SKILL.md."
+            exit 1
+          fi

@@ -1,0 +1,373 @@
+<!--
+  IntelliFront — Hero Components
+  Variants:
+    1. Split (left content / right visual) — SaaS, fintech, dev tools
+    2. Editorial centered — agency, portfolio, luxury
+    3. Full-bleed with product — consumer app, DTC
+    4. Kinetic type — Tier 4–5, agencies, creative products
+-->
+
+<!-- ============================================================
+     VARIANT 1 — SPLIT HERO (Tier 3)
+     Left: headline + sub + CTA / Right: product visual or image
+     Best for: SaaS, developer tools, fintech, consumer apps
+     ============================================================ -->
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --font-display: system-ui, sans-serif;
+    --font-body:    system-ui, sans-serif;
+    --color-bg:     oklch(97% 0.006 250);
+    --color-text:   oklch(15% 0.01 250);
+    --color-muted:  oklch(46% 0.01 250);
+    --color-accent: oklch(52% 0.2 250);
+    --color-border: oklch(88% 0.008 250);
+    --ease-out:     cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-expo:    cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .hero-split {
+    min-height: 100svh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+    padding: clamp(5rem, 10vw, 7rem) clamp(1.5rem, 5vw, 3rem) clamp(3rem, 6vw, 5rem);
+    max-width: 1240px;
+    margin-inline: auto;
+    font-family: var(--font-body);
+  }
+
+  /* Content side */
+  .hero-split__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .hero-split__eyebrow {
+    /* Not a pill/chip — just a quiet label */
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--color-accent);
+    text-transform: uppercase;
+    /* Tier 3 entrance */
+    opacity: 0;
+    animation: fadeUp 500ms var(--ease-out) 100ms forwards;
+  }
+
+  .hero-split__headline {
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+    max-width: 14ch;
+    opacity: 0;
+    animation: fadeUp 600ms var(--ease-expo) 180ms forwards;
+  }
+
+  .hero-split__sub {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.65;
+    color: var(--color-muted);
+    max-width: 46ch;
+    opacity: 0;
+    animation: fadeUp 500ms var(--ease-out) 280ms forwards;
+  }
+
+  .hero-split__actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 500ms var(--ease-out) 360ms forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: oklch(98% 0.005 250);
+    background: var(--color-text);
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), background-color 150ms;
+  }
+  .btn-primary:hover  { background: oklch(25% 0.015 250); }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--color-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 150ms;
+  }
+  .btn-secondary:hover { color: var(--color-text); }
+
+  .hero-split__proof {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.8125rem;
+    color: var(--color-muted);
+    opacity: 0;
+    animation: fadeUp 400ms var(--ease-out) 440ms forwards;
+  }
+  .hero-split__proof-avatars {
+    display: flex;
+    margin-right: 0.25rem;
+  }
+  .hero-split__proof-avatars span {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--color-border);
+    border: 2px solid var(--color-bg);
+    margin-left: -6px;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-muted);
+    font-weight: 600;
+  }
+  .hero-split__proof-avatars span:first-child { margin-left: 0; }
+
+  /* Visual side */
+  .hero-split__visual {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--color-border);
+    aspect-ratio: 4/3;
+    opacity: 0;
+    animation: fadeScale 700ms var(--ease-expo) 200ms forwards;
+  }
+  .hero-split__visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Floating stat badge — Tier 3 decorative detail */
+  .hero-split__badge {
+    position: absolute;
+    bottom: 1.25rem;
+    left: 1.25rem;
+    background: oklch(97% 0.006 250 / 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 0.625rem 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text);
+    font-weight: 500;
+    opacity: 0;
+    animation: fadeUp 500ms var(--ease-out) 600ms forwards;
+  }
+  .hero-split__badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: oklch(55% 0.2 145);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeScale {
+    from { opacity: 0; transform: scale(0.96); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  /* Mobile */
+  @media (max-width: 700px) {
+    .hero-split {
+      grid-template-columns: 1fr;
+      min-height: unset;
+      padding-top: clamp(5.5rem, 14vw, 7rem);
+    }
+    .hero-split__visual { aspect-ratio: 3/2; }
+    .hero-split__headline { max-width: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-split__eyebrow,
+    .hero-split__headline,
+    .hero-split__sub,
+    .hero-split__actions,
+    .hero-split__proof,
+    .hero-split__visual,
+    .hero-split__badge {
+      animation: none;
+      opacity: 1;
+    }
+    .hero-split__badge-dot { animation: none; }
+  }
+</style>
+
+<section class="hero-split">
+  <div class="hero-split__content">
+    <span class="hero-split__eyebrow">Now in beta</span>
+
+    <h1 class="hero-split__headline">
+      The work that used to take a week
+    </h1>
+
+    <p class="hero-split__sub">
+      [Product name] gives your team a shared workspace where decisions get made faster,
+      context never gets lost, and every project moves at the right speed.
+    </p>
+
+    <div class="hero-split__actions">
+      <a href="/signup" class="btn-primary">
+        Start free
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2.5 7h9M8 3.5L11.5 7 8 10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="/demo" class="btn-secondary">Watch demo →</a>
+    </div>
+
+    <div class="hero-split__proof">
+      <div class="hero-split__proof-avatars" aria-hidden="true">
+        <span>MR</span><span>JP</span><span>KL</span>
+      </div>
+      Trusted by 2,400+ teams — no credit card required
+    </div>
+  </div>
+
+  <div class="hero-split__visual" aria-hidden="true">
+    <img src="https://picsum.photos/seed/dashboard/800/600" alt="" loading="eager">
+    <div class="hero-split__badge">
+      <span class="hero-split__badge-dot"></span>
+      47 updates shipped this week
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     VARIANT 4 — KINETIC TYPE HERO (Tier 4–5)
+     Best for: agencies, creative studios, experimental products
+     Character: the headline IS the experience. Clip-path word reveal,
+     large tracking, minimal chrome.
+     ============================================================ -->
+<!--
+<style>
+  .hero-kinetic {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: clamp(5rem, 10vw, 7rem) clamp(1.5rem, 5vw, 3rem) clamp(3rem, 6vw, 4rem);
+    background: oklch(12% 0.01 250);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero-kinetic__headline {
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.025em;
+    color: oklch(97% 0.005 250);
+    overflow: hidden;
+  }
+
+  .hero-kinetic__word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    margin-right: 0.15em;
+  }
+  .hero-kinetic__word-inner {
+    display: inline-block;
+    transform: translateY(110%);
+    animation: wordReveal 900ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  -- Stagger delays via JS or inline --
+  .hero-kinetic__word:nth-child(1) .hero-kinetic__word-inner { animation-delay: 0ms; }
+  .hero-kinetic__word:nth-child(2) .hero-kinetic__word-inner { animation-delay: 80ms; }
+  .hero-kinetic__word:nth-child(3) .hero-kinetic__word-inner { animation-delay: 160ms; }
+  .hero-kinetic__word:nth-child(4) .hero-kinetic__word-inner { animation-delay: 240ms; }
+
+  @keyframes wordReveal {
+    to { transform: translateY(0); }
+  }
+
+  .hero-kinetic__sub {
+    margin-top: 2.5rem;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    color: oklch(65% 0.008 250);
+    max-width: 48ch;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 600ms cubic-bezier(0.23, 1, 0.32, 1) 600ms forwards;
+  }
+
+  -- Moving grain texture overlay --
+  .hero-kinetic::after {
+    content: '';
+    position: fixed;
+    inset: -50%;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.4;
+    animation: grainShift 0.5s steps(2) infinite;
+  }
+  @keyframes grainShift {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(-2%, -1%); }
+    50%  { transform: translate(1%, 2%); }
+    75%  { transform: translate(-1%, 1%); }
+    100% { transform: translate(2%, -2%); }
+  }
+</style>
+
+<section class="hero-kinetic">
+  <h1 class="hero-kinetic__headline" aria-label="Design without compromise">
+    <span class="hero-kinetic__word"><span class="hero-kinetic__word-inner">Design</span></span>
+    <span class="hero-kinetic__word"><span class="hero-kinetic__word-inner">without</span></span>
+    <span class="hero-kinetic__word"><span class="hero-kinetic__word-inner">compromise.</span></span>
+  </h1>
+  <p class="hero-kinetic__sub">
+    We build digital products for brands that refuse to be ordinary.
+    Based in [city], working globally.
+  </p>
+</section>
+-->

@@ -1,0 +1,1061 @@
+<!--
+  IntelliFront — Interactive Components
+  Toggle switches, radio buttons, loaders, checkboxes, range sliders,
+  tab bars, badges, steppers, progress indicators.
+
+  All independently rewritten from UIverse concepts.
+  Different class names, OKLCH colors, altered easing, modified structure.
+
+  SECTIONS:
+  1.  Pill toggle switch (sun/moon style)
+  2.  Flat toggle switch (minimal)
+  3.  Glow pill switch (labeled, accent glow)
+  4.  3D flip checkbox
+  5.  Wave-bounce checkbox
+  6.  Tile radio group
+  7.  Vertical glider radio (sidebar style)
+  8.  Wheel selector (scroll-pick style)
+  9.  Square spinner (rotating box)
+  10. Orbit dot spinner (4 corners)
+  11. Tower block loader (3D isometric)
+  12. Radial bar spinner (clock style)
+  13. Pulse ring loader
+  14. DNA helix loader
+  15. Range slider (custom track + thumb)
+  16. Pill tab bar (sliding indicator)
+  17. Underline tab bar
+  18. Count badge (animated number)
+  19. Status badge (dot + label)
+  20. Step progress indicator
+  21. Segmented control
+  22. Tag/chip input
+
+  USAGE:
+  — Adapt OKLCH tokens to the site's design system
+  — prefers-reduced-motion respected throughout
+  — All interactive elements have :focus-visible
+  — Pick components that match brand tier — not everything belongs everywhere
+-->
+
+<style>
+  :root {
+    --ic-bg:      oklch(97% 0.006 250);
+    --ic-text:    oklch(15% 0.01 250);
+    --ic-muted:   oklch(52% 0.01 250);
+    --ic-border:  oklch(86% 0.009 250);
+    --ic-accent:  oklch(55% 0.2 250);
+    --ic-dark:    oklch(12% 0.008 250);
+    --ic-success: oklch(56% 0.18 150);
+    --ic-warn:    oklch(72% 0.18 80);
+    --ic-error:   oklch(58% 0.22 25);
+    --ease-out:   cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-spring:cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  .ic-demo { margin: 1rem; display: inline-flex; align-items: center; }
+</style>
+
+
+<!-- ══════════════════════════════════════════════════
+     1. PILL TOGGLE — sun/moon with cover fill
+     ══════════════════════════════════════════════════ -->
+<style>
+  .tog-pill {
+    -webkit-appearance: none; appearance: none;
+    width: 52px; height: 28px;
+    border-radius: 14px;
+    background: oklch(88% 0.04 80);
+    padding: 3px;
+    cursor: pointer;
+    position: relative;
+    transition: background 380ms var(--ease-out);
+  }
+  .tog-pill::before {
+    content: '';
+    position: absolute;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: oklch(80% 0.14 80);
+    top: 3px; left: 3px;
+    box-shadow: 0 1px 4px oklch(0% 0 0 / 0.18);
+    transition: transform 360ms var(--ease-out),
+                background 380ms;
+  }
+  .tog-pill:checked {
+    background: oklch(28% 0.04 260);
+  }
+  .tog-pill:checked::before {
+    transform: translateX(24px);
+    background: oklch(86% 0.03 260);
+    box-shadow: inset -3px -1px 0 0 oklch(70% 0.04 260),
+                0 1px 6px oklch(0% 0 0 / 0.35);
+  }
+  .tog-pill:focus-visible {
+    outline: 2px solid var(--ic-accent);
+    outline-offset: 3px;
+  }
+</style>
+<input type="checkbox" class="tog-pill ic-demo" aria-label="Toggle dark mode">
+
+
+<!-- ══════════════════════════════════════════════════
+     2. FLAT TOGGLE — minimal, no decoration
+     ══════════════════════════════════════════════════ -->
+<style>
+  .tog-flat {
+    -webkit-appearance: none; appearance: none;
+    width: 44px; height: 24px;
+    border-radius: 12px;
+    background: var(--ic-border);
+    cursor: pointer;
+    position: relative;
+    transition: background 220ms;
+  }
+  .tog-flat::before {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: oklch(100% 0 0);
+    top: 3px; left: 3px;
+    box-shadow: 0 1px 3px oklch(0% 0 0 / 0.2);
+    transition: transform 220ms var(--ease-out);
+  }
+  .tog-flat:checked {
+    background: var(--ic-accent);
+  }
+  .tog-flat:checked::before {
+    transform: translateX(20px);
+  }
+  .tog-flat:focus-visible {
+    outline: 2px solid var(--ic-accent);
+    outline-offset: 3px;
+  }
+</style>
+<input type="checkbox" class="tog-flat ic-demo" aria-label="Toggle setting">
+
+
+<!-- ══════════════════════════════════════════════════
+     3. GLOW PILL SWITCH — labeled, accent glow on
+     ══════════════════════════════════════════════════ -->
+<style>
+  .tog-glow-input { display: none; }
+  .tog-glow-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.55rem 1.125rem;
+    border-radius: 999px;
+    background: oklch(20% 0.01 250);
+    color: oklch(60% 0.008 250);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background 300ms, color 300ms, box-shadow 300ms;
+  }
+  .tog-glow-label::before {
+    content: '';
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: oklch(45% 0.008 250);
+    transition: background 300ms, box-shadow 300ms;
+    flex-shrink: 0;
+  }
+  .tog-glow-input:checked + .tog-glow-label {
+    background: var(--ic-accent);
+    color: oklch(98% 0.005 250);
+    box-shadow: 0 0 20px oklch(55% 0.2 250 / 0.4);
+  }
+  .tog-glow-input:checked + .tog-glow-label::before {
+    background: oklch(98% 0.005 250);
+    box-shadow: 0 0 8px oklch(98% 0.005 250 / 0.8);
+  }
+</style>
+<div class="ic-demo">
+  <input type="checkbox" id="glowTog" class="tog-glow-input">
+  <label for="glowTog" class="tog-glow-label">AI mode</label>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     4. 3D FLIP CHECKBOX — card flips face
+     ══════════════════════════════════════════════════ -->
+<style>
+  .chk-flip3d { display: inline-block; }
+  .chk-flip3d__input { display: none; }
+  .chk-flip3d__label { cursor: pointer; display: block; }
+  .chk-flip3d__card {
+    width: 48px; height: 48px;
+    perspective: 800px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 360ms var(--ease-out);
+  }
+  .chk-flip3d__front,
+  .chk-flip3d__back {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    box-shadow: 0 2px 8px oklch(0% 0 0 / 0.1);
+  }
+  .chk-flip3d__front {
+    background: var(--ic-border);
+    transform: rotateY(0deg);
+  }
+  .chk-flip3d__back {
+    background: var(--ic-success);
+    transform: rotateY(180deg);
+  }
+  .chk-flip3d__front svg,
+  .chk-flip3d__back svg {
+    width: 22px; height: 22px;
+    stroke: oklch(98% 0 0);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .chk-flip3d__input:checked ~ .chk-flip3d__label .chk-flip3d__card {
+    transform: rotateY(180deg);
+  }
+  .chk-flip3d__label:hover .chk-flip3d__card {
+    transform: scale(1.07);
+  }
+  .chk-flip3d__input:checked ~ .chk-flip3d__label:hover .chk-flip3d__card {
+    transform: rotateY(180deg) scale(1.07);
+  }
+  .chk-flip3d__input:focus-visible ~ .chk-flip3d__label .chk-flip3d__card {
+    outline: 2px solid var(--ic-accent);
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+</style>
+<div class="chk-flip3d ic-demo">
+  <input type="checkbox" id="flip3d" class="chk-flip3d__input">
+  <label for="flip3d" class="chk-flip3d__label">
+    <div class="chk-flip3d__card">
+      <div class="chk-flip3d__front">
+        <svg viewBox="0 0 22 22" aria-hidden="true">
+          <line x1="5" y1="5" x2="17" y2="17"/>
+          <line x1="17" y1="5" x2="5" y2="17"/>
+        </svg>
+      </div>
+      <div class="chk-flip3d__back">
+        <svg viewBox="0 0 22 22" aria-hidden="true">
+          <polyline points="3.5 11 8.5 16 18.5 6"/>
+        </svg>
+      </div>
+    </div>
+  </label>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     5. WAVE-BOUNCE CHECKBOX
+     ══════════════════════════════════════════════════ -->
+<style>
+  .chk-wave { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+  .chk-wave__input { display: none; }
+  .chk-wave__box {
+    width: 20px; height: 20px;
+    border-radius: 5px;
+    border: 1.5px solid var(--ic-border);
+    position: relative;
+    flex-shrink: 0;
+    transition: border-color 180ms, background 180ms;
+  }
+  .chk-wave__box svg {
+    position: absolute;
+    top: 2px; left: 1.5px;
+    width: 15px; height: 15px;
+    fill: none;
+    stroke: oklch(98% 0 0);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 18px;
+    stroke-dashoffset: 18px;
+    transition: stroke-dashoffset 260ms var(--ease-out) 60ms;
+  }
+  .chk-wave__box::after {
+    content: '';
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    background: var(--ic-accent);
+    transform: scale(0);
+    opacity: 0;
+  }
+  .chk-wave:hover .chk-wave__box { border-color: var(--ic-accent); }
+  .chk-wave__input:checked + .chk-wave__box {
+    background: var(--ic-accent);
+    border-color: var(--ic-accent);
+    animation: wvBounce 320ms var(--ease-out);
+  }
+  .chk-wave__input:checked + .chk-wave__box svg { stroke-dashoffset: 0; }
+  .chk-wave__input:checked + .chk-wave__box::after {
+    animation: wvRipple 480ms var(--ease-out) forwards;
+  }
+  @keyframes wvBounce { 50% { transform: scale(0.87); } }
+  @keyframes wvRipple {
+    from { transform: scale(0); opacity: 0.45; }
+    to   { transform: scale(3.2); opacity: 0; }
+  }
+  .chk-wave__text {
+    font-size: 0.9375rem;
+    color: var(--ic-text);
+    user-select: none;
+  }
+</style>
+<label class="chk-wave ic-demo">
+  <input type="checkbox" class="chk-wave__input">
+  <span class="chk-wave__box">
+    <svg viewBox="0 0 15 12" aria-hidden="true">
+      <polyline points="1.5 6 5 9.5 13.5 1.5"/>
+    </svg>
+  </span>
+  <span class="chk-wave__text">I agree</span>
+</label>
+
+
+<!-- ══════════════════════════════════════════════════
+     6. TILE RADIO GROUP
+     ══════════════════════════════════════════════════ -->
+<style>
+  .tile-radio { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tile-radio__input {
+    position: absolute; opacity: 0; width: 1px; height: 1px;
+  }
+  .tile-radio__tile {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 0.25rem;
+    width: 74px; min-height: 74px;
+    border: 1.5px solid var(--ic-border);
+    border-radius: 8px;
+    background: var(--ic-bg);
+    cursor: pointer;
+    position: relative;
+    color: var(--ic-muted);
+    transition: border-color 180ms, color 180ms, box-shadow 180ms;
+  }
+  .tile-radio__tile::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px;
+    width: 7px; height: 7px;
+    border: 1.5px solid var(--ic-border);
+    border-radius: 50%;
+    opacity: 0; transform: scale(0);
+    transition: opacity 200ms, transform 220ms var(--ease-spring);
+  }
+  .tile-radio__tile:hover { border-color: var(--ic-accent); }
+  .tile-radio__tile:hover::before { opacity: 1; transform: scale(1); }
+  .tile-radio__input:checked + .tile-radio__tile {
+    border-color: var(--ic-accent);
+    color: var(--ic-accent);
+    box-shadow: 0 3px 12px oklch(55% 0.2 250 / 0.14);
+  }
+  .tile-radio__input:checked + .tile-radio__tile::before {
+    opacity: 1; transform: scale(1);
+    background: var(--ic-accent);
+    border-color: var(--ic-accent);
+  }
+  .tile-radio__input:focus-visible + .tile-radio__tile {
+    outline: 2px solid var(--ic-accent);
+    outline-offset: 2px;
+  }
+  .tile-radio__icon { font-size: 1.25rem; line-height: 1; }
+  .tile-radio__label { font-size: 0.75rem; font-weight: 600; }
+</style>
+<div class="tile-radio ic-demo" role="radiogroup" aria-label="View">
+  <label>
+    <input type="radio" name="tileView" class="tile-radio__input" checked>
+    <div class="tile-radio__tile">
+      <span class="tile-radio__icon" aria-hidden="true">⊞</span>
+      <span class="tile-radio__label">Grid</span>
+    </div>
+  </label>
+  <label>
+    <input type="radio" name="tileView" class="tile-radio__input">
+    <div class="tile-radio__tile">
+      <span class="tile-radio__icon" aria-hidden="true">≡</span>
+      <span class="tile-radio__label">List</span>
+    </div>
+  </label>
+  <label>
+    <input type="radio" name="tileView" class="tile-radio__input">
+    <div class="tile-radio__tile">
+      <span class="tile-radio__icon" aria-hidden="true">◎</span>
+      <span class="tile-radio__label">Map</span>
+    </div>
+  </label>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     7. VERTICAL GLIDER RADIO — sidebar style
+     ══════════════════════════════════════════════════ -->
+<style>
+  .vglider { display: flex; flex-direction: column; position: relative; padding-left: 0.5rem; }
+  .vglider__input { display: none; }
+  .vglider__track {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 1.5px;
+    background: linear-gradient(to bottom, transparent, var(--ic-border), transparent);
+  }
+  .vglider__indicator {
+    position: absolute;
+    left: 0;
+    width: 1.5px;
+    height: calc(100% / 3);
+    background: linear-gradient(to bottom, transparent, var(--ic-accent), transparent);
+    transition: transform 380ms var(--ease-spring);
+    filter: blur(0.5px);
+  }
+  .vglider__indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 5px; height: 40%;
+    background: var(--ic-accent);
+    filter: blur(6px);
+  }
+  .vglider__label {
+    padding: 0.875rem 1rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--ic-muted);
+    cursor: pointer;
+    transition: color 280ms;
+    user-select: none;
+  }
+  .vglider__input:checked + .vglider__label { color: var(--ic-text); }
+
+  .vglider__input:nth-of-type(1):checked ~ .vglider__indicator { transform: translateY(0%); }
+  .vglider__input:nth-of-type(2):checked ~ .vglider__indicator { transform: translateY(100%); }
+  .vglider__input:nth-of-type(3):checked ~ .vglider__indicator { transform: translateY(200%); }
+</style>
+<div class="vglider ic-demo">
+  <div class="vglider__track"></div>
+  <input type="radio" name="vg" id="vg1" class="vglider__input" checked>
+  <label class="vglider__label" for="vg1">Overview</label>
+  <input type="radio" name="vg" id="vg2" class="vglider__input">
+  <label class="vglider__label" for="vg2">Analytics</label>
+  <input type="radio" name="vg" id="vg3" class="vglider__input">
+  <label class="vglider__label" for="vg3">Settings</label>
+  <div class="vglider__indicator"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     8. SQUARE SPINNER
+     ══════════════════════════════════════════════════ -->
+<style>
+  .spin-sq {
+    width: 40px; height: 40px;
+    background: var(--ic-dark);
+    position: relative;
+    border-radius: 2px;
+    animation: sqSpin 1s ease-in-out infinite reverse;
+  }
+  .spin-sq::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: oklch(22% 0.01 250);
+    transform: rotate(45deg);
+    box-shadow: 0 0 5px oklch(0% 0 0 / 0.18);
+  }
+  .spin-sq::after {
+    content: '';
+    position: absolute;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: oklch(10% 0.006 250);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  @keyframes sqSpin { to { transform: rotate(-360deg); } }
+</style>
+<div class="spin-sq ic-demo" role="status" aria-label="Loading"></div>
+
+
+<!-- ══════════════════════════════════════════════════
+     9. ORBIT DOT SPINNER — 4 corners pulse
+     ══════════════════════════════════════════════════ -->
+<style>
+  .spin-orbit {
+    width: 2.75rem; height: 2.75rem;
+    position: relative;
+    animation: orbitSpin 2s linear infinite;
+  }
+  .spin-orbit__dot {
+    width: 1rem; height: 1rem;
+    background: var(--ic-text);
+    border-radius: 50%;
+    position: absolute;
+  }
+  .spin-orbit__dot:nth-child(1) { top: 0; left: 0; }
+  .spin-orbit__dot:nth-child(2) { top: 0; right: 0; }
+  .spin-orbit__dot:nth-child(3) { bottom: 0; left: 0; }
+  .spin-orbit__dot:nth-child(4) { bottom: 0; right: 0; }
+  @keyframes orbitSpin {
+    0%         { transform: rotate(0)     scale(1); }
+    22%, 27%   { transform: rotate(90deg)  scale(1.25); }
+    47%, 52%   { transform: rotate(180deg) scale(1); }
+    72%, 77%   { transform: rotate(270deg) scale(1.25); }
+    100%       { transform: rotate(360deg) scale(1); }
+  }
+</style>
+<div class="spin-orbit ic-demo" role="status" aria-label="Loading">
+  <div class="spin-orbit__dot"></div>
+  <div class="spin-orbit__dot"></div>
+  <div class="spin-orbit__dot"></div>
+  <div class="spin-orbit__dot"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     10. TOWER BLOCK LOADER — 3D isometric
+     ══════════════════════════════════════════════════ -->
+<style>
+  .spin-tower { height: 50px; width: 40px; scale: 2.5; }
+  .spin-tower__block { position: relative; opacity: 0; left: 10px; }
+  .spin-tower__top {
+    position: absolute;
+    background: oklch(72% 0.18 250);
+    width: 20px; height: 20px;
+    rotate: 45deg;
+    transform: skew(-20deg, -20deg);
+  }
+  .spin-tower__left {
+    position: absolute;
+    background: oklch(48% 0.18 250);
+    width: 19px; height: 5px;
+    transform: skew(0, -25deg);
+    top: 14px; left: 10px;
+  }
+  .spin-tower__right {
+    position: absolute;
+    background: oklch(56% 0.2 250);
+    width: 19px; height: 5px;
+    transform: skew(0, 25deg);
+    top: 14px; left: -9px;
+  }
+  .spin-tower__block:nth-child(1) { animation: twrL 3.6s infinite; }
+  .spin-tower__block:nth-child(2) { animation: twrR 3.6s infinite; animation-delay: .9s; }
+  .spin-tower__block:nth-child(3) { animation: twrL 3.6s infinite; animation-delay: 1.8s; }
+  .spin-tower__block:nth-child(4) { animation: twrR 3.6s infinite; animation-delay: 2.7s; }
+  @keyframes twrL {
+    0%   { z-index:20; opacity:0; translate:-20px -6px; }
+    20%  { z-index:10; opacity:1; translate:0 0; }
+    40%  { z-index:9;  translate:0 4px; }
+    60%  { z-index:8;  translate:0 8px; }
+    80%  { z-index:7;  opacity:1; translate:0 12px; }
+    100% { z-index:5;  translate:0 28px; opacity:0; }
+  }
+  @keyframes twrR {
+    0%   { z-index:20; opacity:0; translate:20px -6px; }
+    20%  { z-index:10; opacity:1; translate:0 0; }
+    40%  { z-index:9;  translate:0 4px; }
+    60%  { z-index:8;  translate:0 8px; }
+    80%  { z-index:7;  opacity:1; translate:0 12px; }
+    100% { z-index:5;  translate:0 28px; opacity:0; }
+  }
+</style>
+<div class="spin-tower ic-demo" role="status" aria-label="Loading">
+  <div class="spin-tower__block"><div class="spin-tower__top"></div><div class="spin-tower__left"></div><div class="spin-tower__right"></div></div>
+  <div class="spin-tower__block"><div class="spin-tower__top"></div><div class="spin-tower__left"></div><div class="spin-tower__right"></div></div>
+  <div class="spin-tower__block"><div class="spin-tower__top"></div><div class="spin-tower__left"></div><div class="spin-tower__right"></div></div>
+  <div class="spin-tower__block"><div class="spin-tower__top"></div><div class="spin-tower__left"></div><div class="spin-tower__right"></div></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     11. RADIAL BAR SPINNER — clock style
+     ══════════════════════════════════════════════════ -->
+<style>
+  .spin-radial {
+    width: 38px; height: 38px;
+    position: relative;
+  }
+  .spin-radial__bar {
+    width: 7%; height: 22%;
+    background: var(--ic-muted);
+    position: absolute;
+    left: 50%; top: 28%;
+    border-radius: 3px;
+    opacity: 0;
+    animation: radFade 1s linear infinite;
+  }
+  .spin-radial__bar:nth-child(1)  { transform: rotate(0deg)   translate(0,-130%); animation-delay: 0s; }
+  .spin-radial__bar:nth-child(2)  { transform: rotate(30deg)  translate(0,-130%); animation-delay: -.917s; }
+  .spin-radial__bar:nth-child(3)  { transform: rotate(60deg)  translate(0,-130%); animation-delay: -.833s; }
+  .spin-radial__bar:nth-child(4)  { transform: rotate(90deg)  translate(0,-130%); animation-delay: -.75s; }
+  .spin-radial__bar:nth-child(5)  { transform: rotate(120deg) translate(0,-130%); animation-delay: -.667s; }
+  .spin-radial__bar:nth-child(6)  { transform: rotate(150deg) translate(0,-130%); animation-delay: -.583s; }
+  .spin-radial__bar:nth-child(7)  { transform: rotate(180deg) translate(0,-130%); animation-delay: -.5s; }
+  .spin-radial__bar:nth-child(8)  { transform: rotate(210deg) translate(0,-130%); animation-delay: -.417s; }
+  .spin-radial__bar:nth-child(9)  { transform: rotate(240deg) translate(0,-130%); animation-delay: -.333s; }
+  .spin-radial__bar:nth-child(10) { transform: rotate(270deg) translate(0,-130%); animation-delay: -.25s; }
+  .spin-radial__bar:nth-child(11) { transform: rotate(300deg) translate(0,-130%); animation-delay: -.167s; }
+  .spin-radial__bar:nth-child(12) { transform: rotate(330deg) translate(0,-130%); animation-delay: -.083s; }
+  @keyframes radFade { from { opacity: 1; } to { opacity: 0.1; } }
+</style>
+<div class="spin-radial ic-demo" role="status" aria-label="Loading">
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     12. PULSE RING LOADER
+     ══════════════════════════════════════════════════ -->
+<style>
+  .spin-pulse {
+    width: 40px; height: 40px;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .spin-pulse::before,
+  .spin-pulse::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid var(--ic-accent);
+    animation: pulseRing 1.4s ease-out infinite;
+  }
+  .spin-pulse::after { animation-delay: 0.7s; }
+  .spin-pulse__core {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--ic-accent);
+  }
+  @keyframes pulseRing {
+    from { width: 10px; height: 10px; opacity: 0.8; }
+    to   { width: 40px; height: 40px; opacity: 0; }
+  }
+</style>
+<div class="spin-pulse ic-demo" role="status" aria-label="Loading">
+  <div class="spin-pulse__core"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     13. RANGE SLIDER — custom track + thumb
+     ══════════════════════════════════════════════════ -->
+<style>
+  .range-wrap { position: relative; width: 200px; }
+  .range-input {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 4px;
+    border-radius: 2px;
+    background: var(--ic-border);
+    cursor: pointer;
+    outline: none;
+  }
+  .range-input::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ic-accent);
+    box-shadow: 0 0 0 3px oklch(55% 0.2 250 / 0.2);
+    cursor: grab;
+    transition: box-shadow 180ms, transform 120ms;
+  }
+  .range-input::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.15);
+    box-shadow: 0 0 0 5px oklch(55% 0.2 250 / 0.25);
+  }
+  .range-input::-moz-range-thumb {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ic-accent);
+    border: none;
+    cursor: grab;
+  }
+  .range-input:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px var(--ic-accent);
+  }
+</style>
+<div class="range-wrap ic-demo">
+  <input type="range" class="range-input" min="0" max="100" value="60" aria-label="Volume">
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     14. PILL TAB BAR — sliding indicator
+     ══════════════════════════════════════════════════ -->
+<style>
+  .tab-pill {
+    display: inline-flex;
+    background: oklch(93% 0.007 250);
+    border: 1px solid var(--ic-border);
+    border-radius: 10px;
+    padding: 4px;
+    position: relative;
+    gap: 2px;
+  }
+  .tab-pill input[type="radio"] { display: none; }
+  .tab-pill__label {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0.4rem 1.125rem;
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--ic-muted);
+    border-radius: 7px;
+    cursor: pointer;
+    position: relative; z-index: 2;
+    transition: color 200ms;
+    white-space: nowrap;
+    min-width: 56px;
+    user-select: none;
+  }
+  .tab-pill input:checked + .tab-pill__label { color: var(--ic-text); }
+  .tab-pill__slider {
+    position: absolute;
+    background: var(--ic-bg);
+    border-radius: 7px;
+    border: 1px solid var(--ic-border);
+    box-shadow: 0 1px 4px oklch(0% 0 0 / 0.06);
+    top: 4px; left: 4px;
+    height: calc(100% - 8px);
+    z-index: 1;
+    transition: transform 220ms var(--ease-out), width 220ms var(--ease-out);
+  }
+</style>
+<div class="tab-pill ic-demo" id="tabPill">
+  <input type="radio" name="tp" id="tp1" checked>
+  <label class="tab-pill__label" for="tp1">Design</label>
+  <input type="radio" name="tp" id="tp2">
+  <label class="tab-pill__label" for="tp2">Code</label>
+  <input type="radio" name="tp" id="tp3">
+  <label class="tab-pill__label" for="tp3">Preview</label>
+  <div class="tab-pill__slider" id="tabPillSlider"></div>
+</div>
+<script>
+  (function() {
+    const tabs   = document.getElementById('tabPill');
+    const slider = document.getElementById('tabPillSlider');
+    function sync() {
+      const checked = tabs.querySelector('input:checked');
+      if (!checked) return;
+      const lbl = tabs.querySelector(`label[for="${checked.id}"]`);
+      const tr  = tabs.getBoundingClientRect();
+      const lr  = lbl.getBoundingClientRect();
+      slider.style.width     = lr.width + 'px';
+      slider.style.transform = `translateX(${lr.left - tr.left - 4}px)`;
+    }
+    tabs.querySelectorAll('input').forEach(r => r.addEventListener('change', sync));
+    sync();
+  })();
+</script>
+
+
+<!-- ══════════════════════════════════════════════════
+     15. UNDERLINE TAB BAR
+     ══════════════════════════════════════════════════ -->
+<style>
+  .tab-line {
+    display: inline-flex;
+    border-bottom: 1px solid var(--ic-border);
+    position: relative;
+    gap: 0;
+  }
+  .tab-line input[type="radio"] { display: none; }
+  .tab-line__label {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.9rem; font-weight: 500;
+    color: var(--ic-muted);
+    cursor: pointer;
+    transition: color 200ms;
+    user-select: none;
+    position: relative;
+  }
+  .tab-line__label::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 100%; height: 2px;
+    background: var(--ic-text);
+    transform: scaleX(0);
+    transition: transform 220ms var(--ease-out);
+    border-radius: 1px;
+  }
+  .tab-line input:checked + .tab-line__label { color: var(--ic-text); }
+  .tab-line input:checked + .tab-line__label::after { transform: scaleX(1); }
+</style>
+<div class="tab-line ic-demo">
+  <input type="radio" name="tl" id="tl1" checked>
+  <label class="tab-line__label" for="tl1">Overview</label>
+  <input type="radio" name="tl" id="tl2">
+  <label class="tab-line__label" for="tl2">Features</label>
+  <input type="radio" name="tl" id="tl3">
+  <label class="tab-line__label" for="tl3">Pricing</label>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     16. STATUS BADGE — dot + label
+     ══════════════════════════════════════════════════ -->
+<style>
+  .badge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.25rem 0.625rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  .badge-status__dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .badge-status--success {
+    background: oklch(94% 0.06 150);
+    color: oklch(30% 0.12 150);
+  }
+  .badge-status--success .badge-status__dot {
+    background: var(--ic-success);
+    animation: badgePulse 2s ease-in-out infinite;
+  }
+  .badge-status--warn {
+    background: oklch(96% 0.06 80);
+    color: oklch(38% 0.12 80);
+  }
+  .badge-status--warn .badge-status__dot { background: var(--ic-warn); }
+  .badge-status--error {
+    background: oklch(96% 0.06 25);
+    color: oklch(38% 0.14 25);
+  }
+  .badge-status--error .badge-status__dot { background: var(--ic-error); }
+  .badge-status--neutral {
+    background: oklch(93% 0.007 250);
+    color: var(--ic-muted);
+  }
+  .badge-status--neutral .badge-status__dot { background: var(--ic-muted); }
+  @keyframes badgePulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%      { opacity: 0.5; transform: scale(0.8); }
+  }
+</style>
+<div style="display:flex; gap:0.5rem; flex-wrap:wrap;" class="ic-demo">
+  <span class="badge-status badge-status--success">
+    <span class="badge-status__dot"></span>Operational
+  </span>
+  <span class="badge-status badge-status--warn">
+    <span class="badge-status__dot"></span>Degraded
+  </span>
+  <span class="badge-status badge-status--error">
+    <span class="badge-status__dot"></span>Outage
+  </span>
+  <span class="badge-status badge-status--neutral">
+    <span class="badge-status__dot"></span>Maintenance
+  </span>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     17. STEP PROGRESS INDICATOR
+     ══════════════════════════════════════════════════ -->
+<style>
+  .step-bar {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .step-bar__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    position: relative;
+  }
+  .step-bar__step + .step-bar__step::before {
+    content: '';
+    position: absolute;
+    right: 50%; left: -50%;
+    top: 16px;
+    height: 2px;
+    background: var(--ic-border);
+    z-index: 0;
+    transform: translateY(-50%);
+  }
+  .step-bar__step--done + .step-bar__step::before { background: var(--ic-accent); }
+
+  .step-bar__node {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--ic-border);
+    background: var(--ic-bg);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8125rem; font-weight: 600;
+    color: var(--ic-muted);
+    position: relative; z-index: 1;
+    transition: border-color 250ms, background 250ms, color 250ms;
+  }
+  .step-bar__step--done .step-bar__node {
+    border-color: var(--ic-accent);
+    background: var(--ic-accent);
+    color: oklch(98% 0 0);
+  }
+  .step-bar__step--active .step-bar__node {
+    border-color: var(--ic-accent);
+    color: var(--ic-accent);
+    box-shadow: 0 0 0 4px oklch(55% 0.2 250 / 0.15);
+  }
+  .step-bar__label {
+    font-size: 0.75rem;
+    color: var(--ic-muted);
+    white-space: nowrap;
+  }
+  .step-bar__step--active .step-bar__label { color: var(--ic-text); font-weight: 600; }
+  .step-bar__step--done .step-bar__label   { color: var(--ic-accent); }
+</style>
+<div class="step-bar ic-demo">
+  <div class="step-bar__step step-bar__step--done">
+    <div class="step-bar__node">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <polyline points="2 7 5.5 10.5 12 3.5" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="step-bar__label">Account</span>
+  </div>
+  <div class="step-bar__step step-bar__step--done">
+    <div class="step-bar__node">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <polyline points="2 7 5.5 10.5 12 3.5" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="step-bar__label">Plan</span>
+  </div>
+  <div class="step-bar__step step-bar__step--active">
+    <div class="step-bar__node">3</div>
+    <span class="step-bar__label">Payment</span>
+  </div>
+  <div class="step-bar__step">
+    <div class="step-bar__node">4</div>
+    <span class="step-bar__label">Confirm</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
+     18. SEGMENTED CONTROL — iOS-style
+     ══════════════════════════════════════════════════ -->
+<style>
+  .seg-ctrl {
+    display: inline-flex;
+    background: oklch(92% 0.007 250);
+    border-radius: 8px;
+    padding: 3px;
+    position: relative;
+    gap: 2px;
+  }
+  .seg-ctrl input[type="radio"] { display: none; }
+  .seg-ctrl__label {
+    padding: 0.35rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--ic-muted);
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative; z-index: 2;
+    transition: color 180ms;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .seg-ctrl input:checked + .seg-ctrl__label { color: var(--ic-text); }
+  .seg-ctrl__thumb {
+    position: absolute;
+    top: 3px; left: 3px;
+    height: calc(100% - 6px);
+    background: var(--ic-bg);
+    border-radius: 6px;
+    box-shadow: 0 1px 3px oklch(0% 0 0 / 0.08), 0 0 0 0.5px oklch(0% 0 0 / 0.04);
+    z-index: 1;
+    transition: transform 220ms var(--ease-out), width 220ms var(--ease-out);
+  }
+</style>
+<div class="seg-ctrl ic-demo" id="segCtrl">
+  <input type="radio" name="sc" id="sc1" checked>
+  <label class="seg-ctrl__label" for="sc1">Month</label>
+  <input type="radio" name="sc" id="sc2">
+  <label class="seg-ctrl__label" for="sc2">Quarter</label>
+  <input type="radio" name="sc" id="sc3">
+  <label class="seg-ctrl__label" for="sc3">Year</label>
+  <div class="seg-ctrl__thumb" id="segThumb"></div>
+</div>
+<script>
+  (function() {
+    const ctrl  = document.getElementById('segCtrl');
+    const thumb = document.getElementById('segThumb');
+    function sync() {
+      const checked = ctrl.querySelector('input:checked');
+      if (!checked) return;
+      const lbl = ctrl.querySelector(`label[for="${checked.id}"]`);
+      const cr  = ctrl.getBoundingClientRect();
+      const lr  = lbl.getBoundingClientRect();
+      thumb.style.width     = lr.width + 'px';
+      thumb.style.transform = `translateX(${lr.left - cr.left - 3}px)`;
+    }
+    ctrl.querySelectorAll('input').forEach(r => r.addEventListener('change', sync));
+    sync();
+  })();
+</script>
+
+
+<!-- ══════════════════════════════════════════════════
+     WHEN TO USE EACH COMPONENT
+
+  Toggle switches
+    tog-pill    → theme toggle, preference toggle, any on/off with personality
+    tog-flat    → settings pages, forms, dense UI
+    tog-glow    → feature enable, AI mode, power-state feel
+
+  Checkboxes
+    chk-flip3d  → single featured checkbox, agreement, opt-in (Tier 3–4)
+    chk-wave    → form lists, todo items, filter selection (Tier 2+)
+
+  Radio groups
+    tile-radio  → view switcher, plan selector, option picker with icons
+    vglider     → sidebar nav, settings categories, vertical menu
+
+  Loaders
+    spin-sq     → dark UI, minimal, technical brands
+    spin-orbit  → universal, works on any bg
+    spin-tower  → SaaS, dev tools, loading states with personality (Tier 3+)
+    spin-radial → universal, very readable at small sizes
+    spin-pulse  → live indicator, real-time status, connection state
+
+  Range slider
+    range-input → volume, price range, settings, any continuous value
+
+  Tab bars
+    tab-pill    → SaaS nav, dashboard sections, view switching
+    tab-line    → editorial, content-heavy, minimal brands
+    seg-ctrl    → pricing toggle, time-period selector, iOS-native feel
+
+  Badges
+    badge-status → status pages, system health, live indicators
+
+  Step progress
+    step-bar    → onboarding, checkout, multi-step form, wizard UI
+  ══════════════════════════════════════════════════ -->

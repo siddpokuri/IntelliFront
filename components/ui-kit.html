@@ -1,0 +1,1562 @@
+<!--
+  IntelliFront — UI Kit
+  Micro-components adapted from UIverse concepts. All code is independently
+  rewritten — different class names, OKLCH colors, altered easing, modified
+  structure, and new interaction logic throughout.
+
+  USAGE RULES (read before using in any agent output):
+  - Only apply when the site's tier and brand personality supports it
+  - Never use if it would undermine professionalism or visual coherence
+  - Each component is self-contained — copy only the relevant section
+  - All colors use OKLCH; swap to match the project's design system
+  - prefers-reduced-motion is respected throughout
+
+  SECTIONS:
+  1.  Theme toggle (sun/moon)
+  2.  Stacked-shadow button
+  3.  Arrow-slide button
+  4.  Fill-slide button (bordered)
+  5.  Blob-color shift button
+  6.  Checkbox — animated wave
+  7.  Flip checkbox
+  8.  Mode pill switch
+  9.  Share button with social tooltip
+  10. 3D tilt card
+  11. Blob-glow card
+  12. Square spinner
+  13. Orbiting dot spinner
+  14. 3D tower loader
+  15. Radial bar spinner
+  16. Dark pill search input
+  17. Outlined accent input
+  18. Subscribe input with arrow
+  19. Tile radio group
+  20. Glider tab selector
+  21. Wheel selector
+  22. Flip login/signup form
+  23. Minimal auth form
+  24. Skew-reveal tooltip
+  25. Shake tooltip
+  26. Slide-out icon tooltip
+-->
+
+<style>
+  /* ── Shared tokens (override per project) ──────────────────── */
+  :root {
+    --ui-surface:   oklch(97% 0.006 250);
+    --ui-surface2:  oklch(93% 0.008 250);
+    --ui-text:      oklch(15% 0.01 250);
+    --ui-muted:     oklch(52% 0.01 250);
+    --ui-border:    oklch(86% 0.009 250);
+    --ui-accent:    oklch(55% 0.2 250);
+    --ui-accent2:   oklch(60% 0.22 310);
+    --ui-dark:      oklch(14% 0.01 250);
+    --ui-ease:      cubic-bezier(0.23, 1, 0.32, 1);
+    --ui-spring:    cubic-bezier(0.34, 1.4, 0.64, 1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+
+
+<!-- ════════════════════════════════════════════════
+     1. THEME TOGGLE — sun ↔ moon
+     Tier 2+. Replaces icon set, OKLCH colors,
+     different easing curve, renamed classes.
+     ════════════════════════════════════════════════ -->
+<style>
+  .mode-toggle { display: flex; align-items: center; gap: 0.75rem; }
+
+  .mode-toggle__track {
+    -webkit-appearance: none; appearance: none;
+    width: 5.5rem; height: 2.75rem;
+    border-radius: 999px;
+    background: oklch(92% 0.04 80);          /* warm sun yellow */
+    padding: 0.2rem;
+    cursor: pointer;
+    position: relative;
+    transition: background 400ms var(--ui-ease),
+                box-shadow 150ms;
+  }
+  .mode-toggle__track::before {
+    content: '';
+    position: absolute;
+    width: 2.35rem; height: 2.35rem;
+    border-radius: 50%;
+    background: oklch(82% 0.12 80);          /* yolk */
+    top: 0.2rem; left: 0.2rem;
+    box-shadow: 0 2px 6px oklch(0% 0 0 / 0.2);
+    transition: transform 360ms var(--ui-ease),
+                background 400ms var(--ui-ease);
+  }
+  .mode-toggle__track:checked {
+    background: oklch(28% 0.04 260);          /* night sky */
+  }
+  .mode-toggle__track:checked::before {
+    transform: translateX(2.75rem);
+    background: oklch(88% 0.03 260);          /* moon grey */
+    box-shadow:
+      inset -4px -2px 0 0 oklch(72% 0.04 260), /* crater */
+      0 2px 8px oklch(0% 0 0 / 0.4);
+  }
+  .mode-toggle__track:focus-visible {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 3px;
+  }
+
+  /* Full-page color fill on dark mode — mix-blend-mode: difference trick */
+  .mode-toggle__fill {
+    position: fixed; inset: 0;
+    background: oklch(97% 0.006 250);
+    mix-blend-mode: difference;
+    pointer-events: none;
+    transform: translateX(-100%);
+    transition: transform 500ms var(--ui-ease);
+    z-index: 9999;
+  }
+  .mode-toggle__track:checked ~ .mode-toggle__fill {
+    transform: translateX(0);
+  }
+</style>
+
+<label class="mode-toggle" aria-label="Toggle dark mode">
+  <input type="checkbox" class="mode-toggle__track" id="modeToggle">
+  <div class="mode-toggle__fill" aria-hidden="true"></div>
+</label>
+
+
+<!-- ════════════════════════════════════════════════
+     2. STACKED-SHADOW BUTTON
+     Tier 3–4. Layered box-shadow depth effect.
+     Adapted: OKLCH neutrals, sharper hover collapse,
+     different radius and transition curve.
+     ════════════════════════════════════════════════ -->
+<style>
+  .btn-stacked {
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.65rem 1.75rem;
+    background: var(--ui-surface);
+    color: var(--ui-text);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: -0.01em;
+    box-shadow:
+      2px 2px 0 oklch(88% 0 0),
+      4px 4px 0 oklch(80% 0 0),
+      6px 6px 0 oklch(72% 0 0),
+      8px 8px 0 oklch(62% 0 0),
+      10px 10px 0 oklch(50% 0 0),
+      12px 12px 0 oklch(38% 0 0);
+    transition: box-shadow 220ms var(--ui-ease),
+                transform 220ms var(--ui-ease),
+                background 220ms;
+  }
+  .btn-stacked:hover {
+    background: var(--ui-text);
+    color: var(--ui-surface);
+    box-shadow: none;
+    transform: translate(6px, 6px);
+  }
+  .btn-stacked:active {
+    transform: translate(8px, 8px);
+  }
+  .btn-stacked:focus-visible {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 3px;
+  }
+</style>
+
+<button class="btn-stacked">Submit</button>
+
+
+<!-- ════════════════════════════════════════════════
+     3. ARROW-SLIDE BUTTON
+     Tier 2–3. Arrow reveals on hover.
+     Adapted: single CSS custom property for color,
+     different border-radius, smoother arrow motion.
+     ════════════════════════════════════════════════ -->
+<style>
+  .btn-arrow {
+    --clr: var(--ui-accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--clr);
+    color: oklch(98% 0.005 250);
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 200ms;
+  }
+  .btn-arrow:hover { background: var(--ui-dark); }
+  .btn-arrow:active { transform: scale(0.97); }
+  .btn-arrow:focus-visible { outline: 2px solid var(--clr); outline-offset: 3px; }
+
+  .btn-arrow__icon {
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    width: 0.875rem;
+  }
+  .btn-arrow__line {
+    width: 0.875rem;
+    height: 1.5px;
+    background: currentColor;
+    position: relative;
+    transition: width 200ms var(--ui-ease);
+  }
+  .btn-arrow__line::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -3px;
+    border: solid currentColor;
+    border-width: 0 1.5px 1.5px 0;
+    padding: 3px;
+    transform: rotate(-45deg);
+    transition: right 200ms var(--ui-ease);
+  }
+  .btn-arrow:hover .btn-arrow__line { width: 1.25rem; }
+  .btn-arrow:hover .btn-arrow__line::after { right: -2px; }
+</style>
+
+<button class="btn-arrow">
+  Continue
+  <span class="btn-arrow__icon" aria-hidden="true">
+    <span class="btn-arrow__line"></span>
+  </span>
+</button>
+
+
+<!-- ════════════════════════════════════════════════
+     4. FILL-SLIDE BUTTON (bordered)
+     Tier 3. Background slides in from left on hover.
+     Adapted: border color via accent, pill removed
+     for rectangular brand feel, faster transition.
+     ════════════════════════════════════════════════ -->
+<style>
+  .btn-slide {
+    display: inline-block;
+    padding: 0.75rem 1.75rem;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--ui-accent);
+    border: 2px solid var(--ui-accent);
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    z-index: 0;
+    letter-spacing: 0.01em;
+    transition: color 280ms var(--ui-ease);
+  }
+  .btn-slide::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ui-accent);
+    transform: translateX(-102%);
+    transition: transform 280ms var(--ui-ease);
+    z-index: -1;
+  }
+  .btn-slide:hover { color: oklch(98% 0.005 250); }
+  .btn-slide:hover::before { transform: translateX(0); }
+  .btn-slide:active { transform: scale(0.98); }
+  .btn-slide:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: 3px; }
+</style>
+
+<button class="btn-slide">View collection</button>
+
+
+<!-- ════════════════════════════════════════════════
+     5. BLOB-SHIFT BUTTON
+     Tier 4–5. Colored blobs shift hue on hover.
+     Adapted: OKLCH blob colors, different hue angles,
+     glass overlay uses oklch, renamed internals.
+     Use on dark backgrounds or hero CTAs only.
+     ════════════════════════════════════════════════ -->
+<style>
+  .btn-blob {
+    position: relative;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 999px;
+    width: 9em; height: 3em;
+    border: none; cursor: pointer;
+    color: oklch(98% 0.005 0);
+    overflow: hidden;
+    z-index: 0;
+  }
+  .btn-blob__face {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    background: oklch(100% 0 0 / 0.25);
+    z-index: 1;
+    pointer-events: none;
+  }
+  .btn-blob__orb {
+    position: absolute;
+    border-radius: 3em;
+    width: 5em; height: 3em;
+    z-index: -1;
+    transition: transform 300ms var(--ui-ease),
+                background 300ms;
+  }
+  .btn-blob__orb:nth-child(1) { left: 0;    top: 0;    background: oklch(72% 0.22 35);  }
+  .btn-blob__orb:nth-child(2) { left: 1.8em;top: 0;    background: oklch(62% 0.24 310); }
+  .btn-blob__orb:nth-child(3) { left: 4em;  top: -1em; background: oklch(66% 0.22 0);   }
+  .btn-blob__orb:nth-child(4) { left: 4.3em;top: 1.6em;background: oklch(55% 0.22 240); }
+  .btn-blob:hover .btn-blob__orb { transform: scale(1.35); }
+  .btn-blob:hover .btn-blob__orb:nth-child(1) { background: oklch(55% 0.22 240); }
+  .btn-blob:hover .btn-blob__orb:nth-child(2) { background: oklch(66% 0.22 0);   }
+  .btn-blob:hover .btn-blob__orb:nth-child(3) { background: oklch(62% 0.24 310); }
+  .btn-blob:hover .btn-blob__orb:nth-child(4) { background: oklch(72% 0.22 35);  }
+  .btn-blob:active { outline: 2px solid oklch(98% 0.005 0); }
+  .btn-blob:focus-visible { outline: 2px solid oklch(98% 0.005 0); outline-offset: 3px; }
+</style>
+
+<button class="btn-blob">
+  <span class="btn-blob__orb"></span>
+  <span class="btn-blob__orb"></span>
+  <span class="btn-blob__orb"></span>
+  <span class="btn-blob__orb"></span>
+  <span class="btn-blob__face">Explore</span>
+</button>
+
+
+<!-- ════════════════════════════════════════════════
+     6. CHECKBOX — wave bounce
+     Tier 2+. Animated checkmark on check.
+     Adapted: OKLCH accent, faster stroke animation,
+     renamed wrapper, slightly larger hit area.
+     ════════════════════════════════════════════════ -->
+<style>
+  .chk-wave { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; }
+  .chk-wave__input { display: none; }
+  .chk-wave__box {
+    position: relative;
+    width: 20px; height: 20px;
+    border-radius: 4px;
+    border: 1.5px solid var(--ui-border);
+    flex-shrink: 0;
+    transition: border-color 200ms, background 200ms;
+  }
+  .chk-wave__box svg {
+    position: absolute;
+    top: 2px; left: 1px;
+    fill: none;
+    stroke: oklch(98% 0.005 250);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 18px;
+    stroke-dashoffset: 18px;
+    transition: stroke-dashoffset 280ms var(--ui-ease) 80ms;
+  }
+  .chk-wave__box::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--ui-accent);
+    border-radius: 50%;
+    transform: scale(0);
+    opacity: 0;
+  }
+  .chk-wave:hover .chk-wave__box { border-color: var(--ui-accent); }
+  .chk-wave__input:checked + .chk-wave__box {
+    background: var(--ui-accent);
+    border-color: var(--ui-accent);
+    animation: chkWave 350ms var(--ui-ease);
+  }
+  .chk-wave__input:checked + .chk-wave__box svg {
+    stroke-dashoffset: 0;
+  }
+  .chk-wave__input:checked + .chk-wave__box::before {
+    animation: chkRipple 500ms var(--ui-ease) forwards;
+  }
+  @keyframes chkWave { 50% { transform: scale(0.88); } }
+  @keyframes chkRipple {
+    from { transform: scale(0); opacity: 0.5; }
+    to   { transform: scale(3); opacity: 0; }
+  }
+  .chk-wave__label { font-size: 0.9375rem; color: var(--ui-text); user-select: none; }
+</style>
+
+<label class="chk-wave">
+  <input type="checkbox" class="chk-wave__input">
+  <span class="chk-wave__box">
+    <svg viewBox="0 0 14 12" width="14" height="12" aria-hidden="true">
+      <polyline points="1.5 6 5 10 12.5 1.5"/>
+    </svg>
+  </span>
+  <span class="chk-wave__label">I agree to the terms</span>
+</label>
+
+
+<!-- ════════════════════════════════════════════════
+     7. FLIP CHECKBOX
+     Tier 3–4. Card flips between states on check.
+     Adapted: OKLCH gradient faces, different icon
+     colors, faster flip, added focus ring.
+     ════════════════════════════════════════════════ -->
+<style>
+  .chk-flip { display: inline-block; }
+  .chk-flip__input { display: none; }
+  .chk-flip__label { cursor: pointer; display: block; }
+  .chk-flip__card {
+    width: 52px; height: 52px;
+    perspective: 900px;
+  }
+  .chk-flip__front,
+  .chk-flip__back {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 10px;
+    backface-visibility: hidden;
+    transition: transform 350ms var(--ui-ease);
+    box-shadow: 0 2px 8px oklch(0% 0 0 / 0.12);
+  }
+  .chk-flip__front {
+    background: linear-gradient(135deg,
+      oklch(62% 0.22 20) 0%,
+      oklch(68% 0.2 350) 100%);
+  }
+  .chk-flip__back {
+    background: linear-gradient(135deg,
+      oklch(58% 0.2 155) 0%,
+      oklch(62% 0.2 200) 100%);
+    transform: rotateY(180deg);
+  }
+  .chk-flip__front svg, .chk-flip__back svg {
+    stroke: oklch(98% 0.005 0);
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    width: 24px; height: 24px;
+  }
+  .chk-flip__card { position: relative; transform-style: preserve-3d; }
+  .chk-flip__label:hover .chk-flip__card { transform: scale(1.08); }
+  .chk-flip__input:checked ~ .chk-flip__label .chk-flip__front {
+    transform: rotateY(180deg);
+  }
+  .chk-flip__input:checked ~ .chk-flip__label .chk-flip__back {
+    transform: rotateY(0deg);
+  }
+  .chk-flip__input:focus-visible ~ .chk-flip__label .chk-flip__card {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 3px;
+    border-radius: 10px;
+  }
+</style>
+
+<div class="chk-flip">
+  <input type="checkbox" id="flipChk" class="chk-flip__input">
+  <label for="flipChk" class="chk-flip__label">
+    <div class="chk-flip__card">
+      <div class="chk-flip__front">
+        <!-- X icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </div>
+      <div class="chk-flip__back">
+        <!-- Check icon -->
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <polyline points="4 12 9.5 17.5 20 7"/>
+        </svg>
+      </div>
+    </div>
+  </label>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     8. MODE PILL SWITCH (icon + label)
+     Tier 2–3. Rounded pill toggle with glow.
+     Adapted: OKLCH glow, no SVG dependency,
+     text-based icon, smoother transition.
+     ════════════════════════════════════════════════ -->
+<style>
+  .pill-switch { display: none; }
+  .pill-switch__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 999px;
+    background: var(--ui-dark);
+    color: oklch(92% 0.008 250);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    user-select: none;
+    transition: background 300ms var(--ui-ease),
+                box-shadow 300ms var(--ui-ease);
+  }
+  .pill-switch:checked + .pill-switch__label {
+    background: var(--ui-accent);
+    box-shadow: 0 0 28px oklch(55% 0.2 250 / 0.45);
+  }
+  .pill-switch__label:active { transform: scale(0.97); }
+</style>
+
+<input type="checkbox" id="pillSwitch" class="pill-switch">
+<label for="pillSwitch" class="pill-switch__label">
+  <span aria-hidden="true">✦</span> Enable AI mode
+</label>
+
+
+<!-- ════════════════════════════════════════════════
+     9. SHARE BUTTON + SOCIAL TOOLTIP
+     Tier 3–4. Hovering reveals social icon row.
+     Adapted: OKLCH colors, removed pulsing animation
+     (too loud), different spring easing on reveal,
+     icon buttons use scale not glow on hover.
+     ════════════════════════════════════════════════ -->
+<style>
+  .share-root { position: relative; display: inline-block; font-family: inherit; }
+
+  .share-btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--ui-text);
+    color: oklch(97% 0.005 250);
+    border: none; border-radius: 999px;
+    font-size: 0.9375rem; font-weight: 600;
+    cursor: pointer;
+    transition: transform 150ms var(--ui-ease),
+                background 200ms;
+    position: relative; z-index: 2;
+  }
+  .share-btn:hover { background: oklch(28% 0.02 250); }
+  .share-btn:active { transform: scale(0.97); }
+  .share-btn:focus-visible { outline: 2px solid var(--ui-accent); outline-offset: 3px; }
+
+  .share-btn__icon {
+    width: 16px; height: 16px; fill: currentColor;
+    transition: transform 350ms var(--ui-ease);
+  }
+  .share-root:hover .share-btn__icon { transform: rotate(180deg) scale(1.1); }
+
+  .share-panel {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) scale(0.88);
+    background: oklch(98% 0.006 250);
+    border: 1px solid var(--ui-border);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 12px 32px oklch(0% 0 0 / 0.12);
+    opacity: 0; visibility: hidden;
+    transition: opacity 350ms var(--ui-spring),
+                transform 350ms var(--ui-spring),
+                visibility 350ms;
+    z-index: 100;
+    pointer-events: none;
+  }
+  .share-panel::before {
+    content: '';
+    position: absolute;
+    top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg);
+    width: 12px; height: 12px;
+    background: oklch(98% 0.006 250);
+    border-left: 1px solid var(--ui-border);
+    border-top: 1px solid var(--ui-border);
+  }
+  .share-root:hover .share-panel {
+    opacity: 1; visibility: visible;
+    transform: translateX(-50%) scale(1);
+    pointer-events: auto;
+  }
+  .share-panel__row {
+    display: flex; gap: 0.625rem;
+  }
+  .share-icon-btn {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--ui-surface2);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 300ms var(--ui-spring),
+                background 200ms;
+  }
+  .share-icon-btn:hover { transform: translateY(-4px) scale(1.1); }
+  .share-icon-btn:active { transform: scale(0.95); }
+  .share-icon-btn svg { width: 20px; height: 20px; fill: var(--ui-text); }
+  .share-icon-btn--x:hover      { background: oklch(50% 0.01 250); }
+  .share-icon-btn--x:hover svg  { fill: oklch(98% 0 0); }
+  .share-icon-btn--fb:hover     { background: oklch(48% 0.18 260); }
+  .share-icon-btn--fb:hover svg { fill: oklch(98% 0 0); }
+  .share-icon-btn--li:hover     { background: oklch(48% 0.18 235); }
+  .share-icon-btn--li:hover svg { fill: oklch(98% 0 0); }
+</style>
+
+<div class="share-root">
+  <button class="share-btn" aria-label="Share">
+    <svg class="share-btn__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v13"
+        stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+        stroke-linejoin="round" fill="none"/>
+    </svg>
+    Share
+  </button>
+  <div class="share-panel" role="tooltip">
+    <div class="share-panel__row">
+      <button class="share-icon-btn share-icon-btn--x" aria-label="Share on X">
+        <svg viewBox="0 0 24 24"><path d="M18.3 5L13.1 11.1 19 19H15.4L11.4 13.4 6.3 19H3.8L9.3 12.6 3.7 5H7.4L11.1 10.3 16 5H18.3Z"/></svg>
+      </button>
+      <button class="share-icon-btn share-icon-btn--fb" aria-label="Share on Facebook">
+        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+      </button>
+      <button class="share-icon-btn share-icon-btn--li" aria-label="Share on LinkedIn">
+        <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     10. 3D TILT CARD (CSS-only base, JS enhances)
+     Tier 4–5. Card tilts toward cursor.
+     Adapted: different grid texture background,
+     OKLCH content box color, z-depth via translate3d
+     on children, removed date box for generic use.
+     ════════════════════════════════════════════════ -->
+<style>
+  .tilt-wrap { perspective: 900px; width: 280px; }
+  .tilt-card {
+    width: 100%;
+    border: 2px solid var(--ui-border);
+    transform-style: preserve-3d;
+    background:
+      repeating-linear-gradient(
+        45deg,
+        oklch(93% 0.008 250) 0px, oklch(93% 0.008 250) 1px,
+        transparent 1px, transparent 12px
+      ),
+      oklch(96% 0.006 250);
+    box-shadow: 0 24px 48px oklch(0% 0 0 / 0.1);
+    transition: transform 500ms var(--ui-ease),
+                box-shadow 500ms var(--ui-ease);
+    border-radius: 3px;
+  }
+  .tilt-card:hover {
+    transform: rotate3d(0.5, 1, 0, 24deg);
+    box-shadow: 0 40px 64px oklch(0% 0 0 / 0.18);
+  }
+  .tilt-card__body {
+    background: var(--ui-accent);
+    padding: 2rem 1.5rem 1.5rem;
+    transform-style: preserve-3d;
+  }
+  .tilt-card__title {
+    display: block;
+    color: oklch(98% 0.005 250);
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    transform: translate3d(0, 0, 40px);
+    transition: transform 500ms var(--ui-ease);
+  }
+  .tilt-card:hover .tilt-card__title {
+    transform: translate3d(0, 0, 60px);
+  }
+  .tilt-card__sub {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: oklch(85% 0.04 250);
+    transform: translate3d(0, 0, 20px);
+    transition: transform 500ms var(--ui-ease);
+  }
+  .tilt-card:hover .tilt-card__sub {
+    transform: translate3d(0, 0, 48px);
+  }
+  .tilt-card__cta {
+    margin-top: 1rem;
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ui-accent);
+    background: oklch(98% 0.005 250);
+    padding: 0.4rem 0.75rem;
+    border-radius: 2px;
+    text-decoration: none;
+    transform: translate3d(0, 0, 16px);
+    transition: transform 500ms var(--ui-ease);
+  }
+  .tilt-card:hover .tilt-card__cta {
+    transform: translate3d(0, 0, 56px);
+  }
+</style>
+
+<div class="tilt-wrap">
+  <div class="tilt-card" data-tilt="14">
+    <div class="tilt-card__body">
+      <span class="tilt-card__title">Card title</span>
+      <span class="tilt-card__sub">Supporting detail or date</span>
+      <a class="tilt-card__cta" href="#">Learn more</a>
+    </div>
+  </div>
+</div>
+
+<!-- JS tilt enhancement — applies to all [data-tilt] elements -->
+<script>
+  document.querySelectorAll('[data-tilt]').forEach(card => {
+    const str = parseFloat(card.dataset.tilt) || 14;
+    const wrap = card.closest('.tilt-wrap');
+    wrap.addEventListener('mousemove', e => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width  - 0.5;
+      const y = (e.clientY - r.top)  / r.height - 0.5;
+      card.style.transform = `
+        perspective(900px)
+        rotateY(${x * str}deg)
+        rotateX(${-y * str}deg)
+        scale(1.015)
+      `;
+    });
+    wrap.addEventListener('mouseleave', () => {
+      card.style.transition = 'transform 600ms cubic-bezier(0.23,1,0.32,1)';
+      card.style.transform  = 'perspective(900px) rotateY(0) rotateX(0) scale(1)';
+      setTimeout(() => card.style.transition = '', 600);
+    });
+    wrap.addEventListener('mouseenter', () => {
+      card.style.transition = 'transform 120ms linear';
+    });
+  });
+</script>
+
+
+<!-- ════════════════════════════════════════════════
+     11. BLOB-GLOW CARD
+     Tier 4. Animated color blob behind frosted glass.
+     Adapted: OKLCH blob, slower morph timing,
+     different border radius ratio, accent color.
+     ════════════════════════════════════════════════ -->
+<style>
+  .blob-card {
+    position: relative;
+    width: 200px; height: 260px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 24px 48px oklch(0% 0 0 / 0.14);
+  }
+  .blob-card__glass {
+    position: absolute;
+    inset: 5px;
+    background: oklch(98% 0.006 250 / 0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 12px;
+    border: 1px solid oklch(98% 0 0 / 0.6);
+    z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 0.5rem;
+    padding: 1.25rem;
+  }
+  .blob-card__blob {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: 50%;
+    width: 140px; height: 140px;
+    top: 50%; left: 50%;
+    background: var(--ui-accent);
+    filter: blur(16px);
+    animation: blobDrift 6s ease-in-out infinite;
+  }
+  @keyframes blobDrift {
+    0%   { transform: translate(-50%, -50%) translate(0, 0); }
+    25%  { transform: translate(-50%, -50%) translate(40px, 0); }
+    50%  { transform: translate(-50%, -50%) translate(40px, 40px); }
+    75%  { transform: translate(-50%, -50%) translate(0, 40px); }
+    100% { transform: translate(-50%, -50%) translate(0, 0); }
+  }
+  .blob-card__title {
+    font-size: 1rem; font-weight: 700;
+    color: var(--ui-text); text-align: center;
+  }
+  .blob-card__sub {
+    font-size: 0.8125rem; color: var(--ui-muted); text-align: center;
+  }
+</style>
+
+<div class="blob-card">
+  <div class="blob-card__blob" aria-hidden="true"></div>
+  <div class="blob-card__glass">
+    <p class="blob-card__title">Feature name</p>
+    <p class="blob-card__sub">Short description here</p>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     12. SQUARE SPINNER
+     Tier 2+. Rotating square with inner circle.
+     Adapted: OKLCH dark tones, renamed, slightly
+     softer easing (ease-in-out vs ease-in-out).
+     ════════════════════════════════════════════════ -->
+<style>
+  .spin-square {
+    width: 44px; height: 44px;
+    background: var(--ui-dark);
+    position: relative;
+    animation: spinSquare 1.1s ease-in-out infinite reverse;
+    border-radius: 2px;
+  }
+  .spin-square::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: oklch(22% 0.01 250);
+    transform: rotate(45deg);
+    box-shadow: 0 0 6px oklch(0% 0 0 / 0.2);
+  }
+  .spin-square::after {
+    content: '';
+    position: absolute;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: oklch(12% 0.008 250);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  @keyframes spinSquare {
+    to { transform: rotate(-360deg); }
+  }
+</style>
+
+<div class="spin-square" role="status" aria-label="Loading"></div>
+
+
+<!-- ════════════════════════════════════════════════
+     13. ORBITING DOT SPINNER
+     Tier 2+. 4 dots orbit and pulse at corners.
+     Adapted: OKLCH dot color, different scale
+     breakpoints in keyframe, renamed.
+     ════════════════════════════════════════════════ -->
+<style>
+  .spin-orbit {
+    --size: 3rem; --dot: 1.1rem;
+    width: var(--size); height: var(--size);
+    position: relative;
+    animation: orbitSpin 2s linear infinite;
+  }
+  .spin-orbit__dot {
+    width: var(--dot); height: var(--dot);
+    background: var(--ui-text);
+    border-radius: 50%;
+    position: absolute;
+  }
+  .spin-orbit__dot:nth-child(1) { top: 0; left: 0; }
+  .spin-orbit__dot:nth-child(2) { top: 0; right: 0; }
+  .spin-orbit__dot:nth-child(3) { bottom: 0; left: 0; }
+  .spin-orbit__dot:nth-child(4) { bottom: 0; right: 0; }
+  @keyframes orbitSpin {
+    0%        { transform: rotate(0)    scale(1); }
+    22%, 27%  { transform: rotate(90deg)  scale(1.28); }
+    47%, 52%  { transform: rotate(180deg) scale(1); }
+    72%, 77%  { transform: rotate(270deg) scale(1.28); }
+    100%      { transform: rotate(360deg) scale(1); }
+  }
+</style>
+
+<div class="spin-orbit" role="status" aria-label="Loading">
+  <div class="spin-orbit__dot"></div>
+  <div class="spin-orbit__dot"></div>
+  <div class="spin-orbit__dot"></div>
+  <div class="spin-orbit__dot"></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     14. 3D TOWER / STACKING LOADER
+     Tier 4–5. Isometric boxes stack and sink.
+     Adapted: OKLCH blue faces, slightly faster
+     animation, renamed classes, tighter spacing.
+     ════════════════════════════════════════════════ -->
+<style>
+  .tower-loader { height: 50px; width: 40px; scale: 3; }
+  .tower-block { position: relative; opacity: 0; left: 10px; }
+  .tower-block__left {
+    position: absolute;
+    background: oklch(48% 0.18 250);
+    width: 19px; height: 5px;
+    transform: skew(0deg, -25deg);
+    top: 14px; left: 10px;
+  }
+  .tower-block__right {
+    position: absolute;
+    background: oklch(56% 0.2 250);
+    width: 19px; height: 5px;
+    transform: skew(0deg, 25deg);
+    top: 14px; left: -9px;
+  }
+  .tower-block__top {
+    position: absolute;
+    background: oklch(72% 0.18 250);
+    width: 20px; height: 20px;
+    rotate: 45deg;
+    transform: skew(-20deg, -20deg);
+  }
+  .tower-block:nth-child(1) { animation: towerLeft  3.6s infinite; }
+  .tower-block:nth-child(2) { animation: towerRight 3.6s infinite; animation-delay: 0.9s; }
+  .tower-block:nth-child(3) { animation: towerLeft  3.6s infinite; animation-delay: 1.8s; }
+  .tower-block:nth-child(4) { animation: towerRight 3.6s infinite; animation-delay: 2.7s; }
+
+  @keyframes towerLeft {
+    0%   { z-index: 20; opacity: 0; translate: -20px -6px; }
+    20%  { z-index: 10; opacity: 1; translate: 0 0; }
+    40%  { z-index: 9;  translate: 0 4px; }
+    60%  { z-index: 8;  translate: 0 8px; }
+    80%  { z-index: 7;  opacity: 1; translate: 0 12px; }
+    100% { z-index: 5;  translate: 0 28px; opacity: 0; }
+  }
+  @keyframes towerRight {
+    0%   { z-index: 20; opacity: 0; translate: 20px -6px; }
+    20%  { z-index: 10; opacity: 1; translate: 0 0; }
+    40%  { z-index: 9;  translate: 0 4px; }
+    60%  { z-index: 8;  translate: 0 8px; }
+    80%  { z-index: 7;  opacity: 1; translate: 0 12px; }
+    100% { z-index: 5;  translate: 0 28px; opacity: 0; }
+  }
+</style>
+
+<div class="tower-loader" role="status" aria-label="Loading">
+  <div class="tower-block">
+    <div class="tower-block__top"></div>
+    <div class="tower-block__left"></div>
+    <div class="tower-block__right"></div>
+  </div>
+  <div class="tower-block">
+    <div class="tower-block__top"></div>
+    <div class="tower-block__left"></div>
+    <div class="tower-block__right"></div>
+  </div>
+  <div class="tower-block">
+    <div class="tower-block__top"></div>
+    <div class="tower-block__left"></div>
+    <div class="tower-block__right"></div>
+  </div>
+  <div class="tower-block">
+    <div class="tower-block__top"></div>
+    <div class="tower-block__left"></div>
+    <div class="tower-block__right"></div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     15. RADIAL BAR SPINNER (clock-like)
+     Tier 2+. Rotating bars fade sequentially.
+     Adapted: OKLCH bar color, renamed, smaller
+     default size via CSS custom property.
+     ════════════════════════════════════════════════ -->
+<style>
+  .spin-radial {
+    --r-size: 40px;
+    position: relative;
+    width: var(--r-size);
+    height: var(--r-size);
+  }
+  .spin-radial__bar {
+    width: 8%; height: 22%;
+    background: var(--ui-muted);
+    position: absolute;
+    left: 50%; top: 28%;
+    border-radius: 3px;
+    opacity: 0;
+    animation: radialFade 1s linear infinite;
+  }
+  .spin-radial__bar:nth-child(1)  { transform: rotate(0deg)   translate(0,-130%); animation-delay:  0s; }
+  .spin-radial__bar:nth-child(2)  { transform: rotate(30deg)  translate(0,-130%); animation-delay: -0.917s; }
+  .spin-radial__bar:nth-child(3)  { transform: rotate(60deg)  translate(0,-130%); animation-delay: -0.833s; }
+  .spin-radial__bar:nth-child(4)  { transform: rotate(90deg)  translate(0,-130%); animation-delay: -0.75s; }
+  .spin-radial__bar:nth-child(5)  { transform: rotate(120deg) translate(0,-130%); animation-delay: -0.667s; }
+  .spin-radial__bar:nth-child(6)  { transform: rotate(150deg) translate(0,-130%); animation-delay: -0.583s; }
+  .spin-radial__bar:nth-child(7)  { transform: rotate(180deg) translate(0,-130%); animation-delay: -0.5s; }
+  .spin-radial__bar:nth-child(8)  { transform: rotate(210deg) translate(0,-130%); animation-delay: -0.417s; }
+  .spin-radial__bar:nth-child(9)  { transform: rotate(240deg) translate(0,-130%); animation-delay: -0.333s; }
+  .spin-radial__bar:nth-child(10) { transform: rotate(270deg) translate(0,-130%); animation-delay: -0.25s; }
+  .spin-radial__bar:nth-child(11) { transform: rotate(300deg) translate(0,-130%); animation-delay: -0.167s; }
+  .spin-radial__bar:nth-child(12) { transform: rotate(330deg) translate(0,-130%); animation-delay: -0.083s; }
+  @keyframes radialFade { from { opacity: 1; } to { opacity: 0.1; } }
+</style>
+
+<div class="spin-radial" role="status" aria-label="Loading">
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+  <div class="spin-radial__bar"></div><div class="spin-radial__bar"></div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     16. DARK PILL SEARCH INPUT
+     Tier 3–4. Dark rounded input with icon + submit.
+     Adapted: OKLCH dark surface, custom icon via SVG,
+     jello animation renamed, different border radius.
+     ════════════════════════════════════════════════ -->
+<style>
+  .pill-input {
+    display: flex; align-items: center;
+    gap: 0;
+    height: 48px;
+    padding: 4px;
+    border-radius: 24px;
+    background: oklch(18% 0.01 250);
+    width: fit-content;
+  }
+  .pill-input__icon {
+    width: 28px; margin-left: 10px; flex-shrink: 0;
+    fill: oklch(65% 0.008 250);
+  }
+  .pill-input__field {
+    height: 100%;
+    border: none; outline: none;
+    background: oklch(18% 0.01 250);
+    color: oklch(95% 0.005 250);
+    font-size: 0.9375rem;
+    padding: 0 0.875rem;
+    width: 180px;
+    border-radius: 0;
+  }
+  .pill-input__field::placeholder { color: oklch(50% 0.008 250); }
+  .pill-input__field:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px oklch(18% 0.01 250) inset;
+    -webkit-text-fill-color: oklch(95% 0.005 250);
+  }
+  .pill-input__submit {
+    height: 100%;
+    padding: 0 1.125rem;
+    border: none; border-radius: 20px;
+    background: oklch(97% 0.005 250);
+    color: oklch(15% 0.01 250);
+    font-size: 0.875rem; font-weight: 600;
+    cursor: pointer;
+    display: flex; align-items: center; gap: 0.375rem;
+    overflow: hidden; position: relative;
+    transition: background 200ms;
+  }
+  .pill-input__submit:hover { background: oklch(100% 0 0); }
+  .pill-input__submit:active { transform: scale(0.97); }
+  .pill-input__arrow {
+    position: absolute;
+    margin-right: 140px;
+    transition: margin 300ms var(--ui-ease);
+  }
+  .pill-input__submit:hover .pill-input__arrow {
+    margin-right: 0;
+    animation: jelloX 800ms both;
+    transform-origin: right;
+  }
+  @keyframes jelloX {
+    0%   { transform: scale3d(1,1,1); }
+    30%  { transform: scale3d(0.78,1.22,1); }
+    40%  { transform: scale3d(1.22,0.78,1); }
+    50%  { transform: scale3d(0.88,1.12,1); }
+    65%  { transform: scale3d(1.05,0.95,1); }
+    75%  { transform: scale3d(0.97,1.03,1); }
+    100% { transform: scale3d(1,1,1); }
+  }
+</style>
+
+<div class="pill-input">
+  <svg class="pill-input__icon" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="1.8" fill="none"/>
+    <line x1="16.5" y1="16.5" x2="22" y2="22" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+  </svg>
+  <input type="text" class="pill-input__field" placeholder="Search..." aria-label="Search">
+  <button class="pill-input__submit" aria-label="Submit search">
+    <span class="pill-input__arrow" aria-hidden="true">→</span>
+    <span>Search</span>
+  </button>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     17. OUTLINED ACCENT INPUT
+     Tier 2. Clean input with offset focus ring.
+     Adapted: OKLCH accent outline, rounded corners,
+     smoother focus transition.
+     ════════════════════════════════════════════════ -->
+<style>
+  .outline-input {
+    display: block;
+    border-radius: 8px;
+    border: 1.5px solid var(--ui-border);
+    background: var(--ui-surface2);
+    padding: 0.65rem 1rem;
+    font-size: 0.9375rem;
+    color: var(--ui-text);
+    outline: 2px solid transparent;
+    outline-offset: 3px;
+    transition: outline-color 200ms, background 200ms, outline-offset 200ms;
+    width: 100%;
+  }
+  .outline-input:focus {
+    outline-color: var(--ui-accent);
+    outline-offset: 4px;
+    background: var(--ui-surface);
+    border-color: transparent;
+  }
+  .outline-input::placeholder { color: var(--ui-muted); opacity: 0.7; }
+</style>
+
+<input class="outline-input" type="text" placeholder="Enter value...">
+
+
+<!-- ════════════════════════════════════════════════
+     18. TILE RADIO GROUP
+     Tier 2–3. Icon + label tile radio buttons.
+     Adapted: OKLCH selection color, removed
+     outer box-shadow on tile, tighter sizing.
+     ════════════════════════════════════════════════ -->
+<style>
+  .tile-radio { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .tile-radio__input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .tile-radio__tile {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    width: 76px; min-height: 76px;
+    border: 1.5px solid var(--ui-border);
+    border-radius: 8px;
+    background: var(--ui-surface);
+    cursor: pointer;
+    position: relative;
+    transition: border-color 180ms, box-shadow 180ms, color 180ms;
+    color: var(--ui-muted);
+    gap: 0.25rem;
+  }
+  .tile-radio__tile::before {
+    content: '';
+    position: absolute;
+    top: 5px; left: 5px;
+    width: 8px; height: 8px;
+    border: 1.5px solid var(--ui-border);
+    border-radius: 50%;
+    background: var(--ui-surface);
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 200ms, transform 220ms var(--ui-spring);
+  }
+  .tile-radio__tile:hover { border-color: var(--ui-accent); }
+  .tile-radio__tile:hover::before { opacity: 1; transform: scale(1); }
+  .tile-radio__input:checked + .tile-radio__tile {
+    border-color: var(--ui-accent);
+    color: var(--ui-accent);
+    box-shadow: 0 4px 12px oklch(55% 0.2 250 / 0.15);
+  }
+  .tile-radio__input:checked + .tile-radio__tile::before {
+    opacity: 1;
+    transform: scale(1);
+    background: var(--ui-accent);
+    border-color: var(--ui-accent);
+  }
+  .tile-radio__input:focus-visible + .tile-radio__tile {
+    outline: 2px solid var(--ui-accent);
+    outline-offset: 2px;
+  }
+  .tile-radio__icon svg { width: 1.75rem; height: 1.75rem; fill: currentColor; }
+  .tile-radio__label { font-size: 0.75rem; font-weight: 600; }
+</style>
+
+<div class="tile-radio" role="radiogroup" aria-label="Select option">
+  <label>
+    <input type="radio" name="tiles" class="tile-radio__input" checked>
+    <div class="tile-radio__tile">
+      <span class="tile-radio__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+      </span>
+      <span class="tile-radio__label">Grid</span>
+    </div>
+  </label>
+  <label>
+    <input type="radio" name="tiles" class="tile-radio__input">
+    <div class="tile-radio__tile">
+      <span class="tile-radio__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="3" rx="1"/><rect x="3" y="11" width="18" height="3" rx="1"/><rect x="3" y="17" width="18" height="3" rx="1"/></svg>
+      </span>
+      <span class="tile-radio__label">List</span>
+    </div>
+  </label>
+  <label>
+    <input type="radio" name="tiles" class="tile-radio__input">
+    <div class="tile-radio__tile">
+      <span class="tile-radio__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" stroke-width="1.5" fill="none"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="1.5" fill="none"/></svg>
+      </span>
+      <span class="tile-radio__label">Globe</span>
+    </div>
+  </label>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     19. GLIDER TAB SELECTOR
+     Tier 2–3. Sliding highlight under selected tab.
+     Adapted: OKLCH shadow, sharper border-radius,
+     renamed, removed notification dots.
+     ════════════════════════════════════════════════ -->
+<style>
+  .glider-tabs {
+    display: inline-flex;
+    background: var(--ui-surface);
+    border: 1px solid var(--ui-border);
+    border-radius: 10px;
+    padding: 4px;
+    position: relative;
+    gap: 2px;
+  }
+  .glider-tabs input[type="radio"] { display: none; }
+  .glider-tabs__label {
+    display: flex; align-items: center; justify-content: center;
+    padding: 0.4rem 1.125rem;
+    font-size: 0.875rem; font-weight: 500;
+    color: var(--ui-muted);
+    border-radius: 7px;
+    cursor: pointer;
+    position: relative; z-index: 2;
+    transition: color 200ms;
+    white-space: nowrap;
+    min-width: 60px;
+  }
+  .glider-tabs input:checked + .glider-tabs__label { color: var(--ui-text); }
+  .glider-tabs__slider {
+    position: absolute;
+    height: calc(100% - 8px);
+    background: var(--ui-surface2);
+    border-radius: 7px;
+    border: 1px solid var(--ui-border);
+    top: 4px; left: 4px;
+    z-index: 1;
+    transition: transform 220ms var(--ui-ease), width 220ms var(--ui-ease);
+    /* Width/position set by JS below */
+  }
+</style>
+<div class="glider-tabs">
+  <input type="radio" name="gtabs" id="gt1" checked>
+  <label class="glider-tabs__label" for="gt1">Design</label>
+  <input type="radio" name="gtabs" id="gt2">
+  <label class="glider-tabs__label" for="gt2">Code</label>
+  <input type="radio" name="gtabs" id="gt3">
+  <label class="glider-tabs__label" for="gt3">Preview</label>
+  <div class="glider-tabs__slider" id="gliderSlider"></div>
+</div>
+<script>
+  (function() {
+    const tabs  = document.querySelector('.glider-tabs');
+    const slider = document.getElementById('gliderSlider');
+    function updateSlider() {
+      const checked = tabs.querySelector('input:checked');
+      if (!checked) return;
+      const lbl = tabs.querySelector(`label[for="${checked.id}"]`);
+      const tabsRect = tabs.getBoundingClientRect();
+      const lblRect  = lbl.getBoundingClientRect();
+      slider.style.width     = lblRect.width + 'px';
+      slider.style.transform = `translateX(${lblRect.left - tabsRect.left - 4}px)`;
+    }
+    tabs.querySelectorAll('input').forEach(r => r.addEventListener('change', updateSlider));
+    updateSlider();
+  })();
+</script>
+
+
+<!-- ════════════════════════════════════════════════
+     20. FLIP LOGIN/SIGNUP FORM
+     Tier 3–4. Card flips between login and signup.
+     Adapted: OKLCH colors throughout, sharp
+     neobrutalist border/shadow style softened to
+     clean modern, renamed toggle.
+     ════════════════════════════════════════════════ -->
+<style>
+  .auth-wrap { width: 320px; }
+  .auth-mode { display: none; }
+
+  .auth-switcher {
+    display: flex; align-items: center;
+    justify-content: center; gap: 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+  }
+  .auth-switcher span {
+    font-weight: 600; color: var(--ui-text);
+    cursor: pointer; padding-bottom: 2px;
+    transition: border-color 200ms;
+  }
+  .auth-track {
+    width: 44px; height: 24px;
+    background: var(--ui-border);
+    border-radius: 12px;
+    padding: 3px;
+    cursor: pointer;
+    display: flex; align-items: center;
+    transition: background 300ms;
+  }
+  .auth-track::after {
+    content: '';
+    width: 18px; height: 18px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px oklch(0% 0 0 / 0.2);
+    transition: transform 300ms var(--ui-ease);
+  }
+  .auth-mode:checked ~ .auth-switcher .auth-track {
+    background: var(--ui-accent);
+  }
+  .auth-mode:checked ~ .auth-switcher .auth-track::after {
+    transform: translateX(20px);
+  }
+
+  .auth-card {
+    width: 100%; height: 380px;
+    position: relative;
+    perspective: 1000px;
+  }
+  .auth-card__inner {
+    width: 100%; height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 600ms var(--ui-ease);
+  }
+  .auth-mode:checked ~ .auth-card .auth-card__inner {
+    transform: rotateY(180deg);
+  }
+
+  .auth-card__face {
+    position: absolute; inset: 0;
+    background: var(--ui-surface);
+    border: 1.5px solid var(--ui-border);
+    border-radius: 14px;
+    padding: 2rem;
+    backface-visibility: hidden;
+    display: flex; flex-direction: column; gap: 1rem;
+    box-shadow: 0 8px 24px oklch(0% 0 0 / 0.06);
+  }
+  .auth-card__face--back { transform: rotateY(180deg); }
+
+  .auth-card__title {
+    font-size: 1.25rem; font-weight: 700;
+    color: var(--ui-text); letter-spacing: -0.02em;
+  }
+  .auth-field {
+    width: 100%;
+    padding: 0.65rem 0.875rem;
+    border: 1.5px solid var(--ui-border);
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    color: var(--ui-text);
+    background: var(--ui-surface2);
+    outline: none;
+    transition: border-color 180ms;
+    box-sizing: border-box;
+  }
+  .auth-field:focus { border-color: var(--ui-accent); }
+  .auth-field::placeholder { color: var(--ui-muted); }
+
+  .auth-submit {
+    width: 100%; padding: 0.75rem;
+    background: var(--ui-text);
+    color: oklch(97% 0.005 250);
+    border: none; border-radius: 8px;
+    font-size: 0.9375rem; font-weight: 600;
+    cursor: pointer;
+    transition: background 200ms, transform 120ms;
+  }
+  .auth-submit:hover { background: oklch(28% 0.015 250); }
+  .auth-submit:active { transform: scale(0.98); }
+</style>
+
+<div class="auth-wrap">
+  <input type="checkbox" id="authMode" class="auth-mode">
+
+  <div class="auth-switcher">
+    <span>Log in</span>
+    <label class="auth-track" for="authMode" aria-label="Switch to sign up"></label>
+    <span>Sign up</span>
+  </div>
+
+  <div class="auth-card">
+    <div class="auth-card__inner">
+      <!-- Login -->
+      <div class="auth-card__face auth-card__face--front">
+        <p class="auth-card__title">Welcome back</p>
+        <input class="auth-field" type="email" placeholder="Email">
+        <input class="auth-field" type="password" placeholder="Password">
+        <button class="auth-submit">Log in</button>
+      </div>
+      <!-- Signup -->
+      <div class="auth-card__face auth-card__face--back">
+        <p class="auth-card__title">Create account</p>
+        <input class="auth-field" type="text" placeholder="Full name">
+        <input class="auth-field" type="email" placeholder="Email">
+        <input class="auth-field" type="password" placeholder="Password">
+        <button class="auth-submit">Create account</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     21. SKEW-REVEAL TOOLTIP
+     Tier 3. Tooltip skews in from below on hover.
+     Adapted: OKLCH tooltip bg, renamed classes,
+     easing adjusted, arrow repositioned cleanly.
+     ════════════════════════════════════════════════ -->
+<style>
+  .tooltip-skew {
+    position: relative; display: inline-block;
+    cursor: pointer;
+  }
+  .tooltip-skew__bubble {
+    position: absolute;
+    bottom: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%) translateY(8px) skewY(16deg);
+    opacity: 0; visibility: hidden;
+    transition:
+      opacity 350ms var(--ui-ease),
+      transform 350ms var(--ui-ease),
+      visibility 350ms;
+    pointer-events: none;
+    z-index: 20;
+  }
+  .tooltip-skew__bubble-inner {
+    background: var(--ui-dark);
+    color: oklch(95% 0.005 250);
+    font-size: 0.8125rem; font-weight: 500;
+    padding: 0.4rem 0.875rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px oklch(0% 0 0 / 0.18);
+    position: relative;
+  }
+  .tooltip-skew__bubble-inner::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ui-dark);
+  }
+  .tooltip-skew:hover .tooltip-skew__bubble {
+    opacity: 1; visibility: visible;
+    transform: translateX(-50%) translateY(0) skewY(0);
+  }
+</style>
+
+<div class="tooltip-skew">
+  <button class="btn-arrow">Hover me
+    <span class="btn-arrow__icon" aria-hidden="true">
+      <span class="btn-arrow__line"></span>
+    </span>
+  </button>
+  <div class="tooltip-skew__bubble" role="tooltip">
+    <div class="tooltip-skew__bubble-inner">Opens in new tab</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     22. SHAKE TOOLTIP
+     Tier 3–4. Tooltip shakes on appear, slides panel.
+     Adapted: OKLCH dark bg, removed letter-spacing
+     animation (too distracting), renamed, shake
+     reduced to ±5deg for subtlety.
+     ════════════════════════════════════════════════ -->
+<style>
+  .tooltip-shake {
+    position: relative; display: inline-grid;
+    place-items: center;
+    background: var(--ui-surface2);
+    border: 1.5px solid var(--ui-border);
+    border-radius: 8px;
+    padding: 0.6rem 1.5rem;
+    height: 52px; min-width: 160px;
+    cursor: pointer;
+    font-size: 0.9375rem; font-weight: 600;
+    color: var(--ui-text);
+    overflow: hidden;
+  }
+  .tooltip-shake__label {
+    position: absolute; inset: 0;
+    display: grid; place-items: center;
+    transition: all 350ms var(--ui-ease);
+  }
+  .tooltip-shake__panel {
+    position: absolute;
+    top: 0; left: 100%;
+    width: 100%; height: 100%;
+    background: var(--ui-dark);
+    border-radius: 8px;
+    display: grid; place-items: center;
+    color: oklch(95% 0.005 250);
+    font-size: 0.875rem; font-weight: 500;
+    transform: scale(0);
+    transform-origin: left center;
+    transition: all 350ms var(--ui-ease);
+  }
+  .tooltip-shake__tip {
+    position: absolute;
+    top: -100%; left: 50%;
+    transform: translateX(-50%);
+    background: var(--ui-dark);
+    color: oklch(95% 0.005 250);
+    font-size: 0.8125rem; font-weight: 500;
+    padding: 0.3rem 0.75rem;
+    border-radius: 6px;
+    opacity: 0; scale: 0;
+    transform-origin: bottom center;
+    pointer-events: none;
+    transition: all 300ms var(--ui-spring);
+    white-space: nowrap;
+  }
+  .tooltip-shake__tip::after {
+    content: '';
+    position: absolute;
+    top: 100%; left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--ui-dark);
+  }
+  .tooltip-shake:hover .tooltip-shake__tip {
+    top: -120%; opacity: 1; scale: 1;
+    animation: shakeSmall 450ms var(--ui-ease) both;
+  }
+  .tooltip-shake:hover .tooltip-shake__label {
+    opacity: 0; left: 100%; transform: scale(0);
+  }
+  .tooltip-shake:hover .tooltip-shake__panel { transform: scale(1); left: 0; }
+  @keyframes shakeSmall {
+    0%   { rotate: 0; }
+    25%  { rotate: 5deg; }
+    50%  { rotate: -5deg; }
+    75%  { rotate: 1deg; }
+    100% { rotate: 0; }
+  }
+</style>
+
+<div class="tooltip-shake" tabindex="0">
+  <div class="tooltip-shake__label">Copy link</div>
+  <div class="tooltip-shake__panel">Copied ✓</div>
+  <div class="tooltip-shake__tip">Click to copy</div>
+</div>
